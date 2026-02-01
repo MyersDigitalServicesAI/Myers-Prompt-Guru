@@ -1,0 +1,5 @@
+{
+  "name": "PromptMaster Library",
+  "description": "A centralized platform to manage, categorize, and dynamically fill LLM prompts with real-time variable injection.",
+  "requestFramePermissions": []
+}
