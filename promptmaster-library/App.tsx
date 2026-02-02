@@ -102,9 +102,44 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // --- Save Library to LocalStorage ---
+  // --- Load Library from GHL (Production) or LocalStorage (Dev) ---
+  useEffect(() => {
+    const loadLibrary = async () => {
+      try {
+        const response = await fetch('/api/ghl-storage');
+        const data = await response.json();
+        if (data.library && Array.isArray(data.library) && data.library.length > 0) {
+          setAllPrompts(data.library);
+          showToast('Library synced with GoHighLevel', 'info');
+        }
+      } catch (err) {
+        console.warn('GHL sync failed, falling back to LocalStorage', err);
+      }
+    };
+    loadLibrary();
+  }, []);
+
+  // --- Save Library to GHL & LocalStorage ---
   useEffect(() => {
     localStorage.setItem('promptmaster_library', JSON.stringify(allPrompts));
+
+    // Sync to GHL (Debounced or on significant changes could be better, but direct for now)
+    const syncToGHL = async () => {
+      try {
+        await fetch('/api/ghl-storage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ library: allPrompts })
+        });
+      } catch (err) {
+        console.error('Failed to sync library to GoHighLevel', err);
+      }
+    };
+
+    // Only sync if library has actual content (prevent wiping on accidental empty state)
+    if (allPrompts.length > 0) {
+      syncToGHL();
+    }
   }, [allPrompts]);
 
   // --- Filtering Logic ---
