@@ -14,8 +14,18 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   const handleSubscribe = () => {
+    // Check for real Stripe Payment Link in environment variable
+    const stripeLink = (import.meta as any).env.VITE_STRIPE_PAYMENT_LINK;
+
+    if (stripeLink && stripeLink !== 'your_stripe_payment_link_here') {
+      setIsProcessing(true);
+      // Redirect to the actual Stripe Payment Link
+      window.location.href = stripeLink;
+      return;
+    }
+
+    // Fallback to simulation for dev/testing
     setIsProcessing(true);
-    // Simulate payment processing delay
     setTimeout(() => {
       onUpgrade();
       setIsProcessing(false);
