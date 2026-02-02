@@ -20,8 +20,10 @@ import { Loader2, Sparkles } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { ScrollArea } from "../ui/scroll-area";
 import { type ExtractPromptsOutput } from "@/ai/flows/ai-bulk-import-extract-prompts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { ScreenshotImportTab } from "./screenshot-import-tab";
 
-function SubmitButton() {
+function BulkImportSubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
@@ -51,58 +53,66 @@ function ExtractedPrompts({ prompts }: { prompts: ExtractPromptsOutput }) {
   );
 }
 
+function BulkImportTab() {
+    const [formState, formAction] = React.useActionState(handleBulkImport, {
+        message: "",
+        prompts: null,
+        error: false,
+    });
+    
+    if (formState.prompts && !formState.error) {
+        return <div className="py-4"><ExtractedPrompts prompts={formState.prompts} /></div>;
+    }
+
+    return (
+        <form action={formAction}>
+            <div className="grid gap-4 py-4">
+                <div className="grid w-full gap-1.5">
+                <Label htmlFor="text">Your Text or Prompts</Label>
+                <Textarea
+                    placeholder="Paste your content here."
+                    id="text"
+                    name="text"
+                    rows={10}
+                    required
+                />
+                {formState.error && formState.message && (
+                    <p className="text-sm text-destructive">{formState.message}</p>
+                )}
+                </div>
+            </div>
+            <DialogFooter>
+                <BulkImportSubmitButton />
+            </DialogFooter>
+        </form>
+    )
+}
+
 export function AddPromptDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
-  const [formState, formAction] = React.useActionState(handleBulkImport, {
-    message: "",
-    prompts: null,
-    error: false,
-  });
-
-  React.useEffect(() => {
-    if (formState.message && !formState.prompts) {
-      // Potentially show a toast on error
-    }
-    if (formState.prompts) {
-      // Don't close dialog on success, show results
-    }
-  }, [formState]);
-
+  
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>AI Bulk Import</DialogTitle>
+          <DialogTitle>AI-Powered Import</DialogTitle>
           <DialogDescription>
-            Paste a block of text containing one or more prompts. Our AI will
-            extract them for you.
+            Use AI to bulk import from text or a screenshot. This is a Pro feature.
           </DialogDescription>
         </DialogHeader>
-        {formState.prompts ? (
-          <ExtractedPrompts prompts={formState.prompts} />
-        ) : (
-          <form action={formAction}>
-            <div className="grid gap-4 py-4">
-              <div className="grid w-full gap-1.5">
-                <Label htmlFor="text">Your Text or Prompts</Label>
-                <Textarea
-                  placeholder="Paste your content here. You can also include images by pasting them."
-                  id="text"
-                  name="text"
-                  rows={10}
-                  required
-                />
-                {formState.error && formState.message && (
-                    <p className="text-sm text-destructive">{formState.message}</p>
-                )}
-              </div>
-            </div>
-            <DialogFooter>
-              <SubmitButton />
-            </DialogFooter>
-          </form>
-        )}
+        <Tabs defaultValue="bulk-text" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="bulk-text">From Text</TabsTrigger>
+                <TabsTrigger value="screenshot">From Screenshot</TabsTrigger>
+            </TabsList>
+            <TabsContent value="bulk-text">
+                <BulkImportTab />
+            </TabsContent>
+            <TabsContent value="screenshot">
+                <ScreenshotImportTab />
+            </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

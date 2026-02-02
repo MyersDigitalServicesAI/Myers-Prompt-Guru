@@ -16,7 +16,8 @@ import Link from "next/link";
 
 const proFeatures = [
     "Unlimited Prompt Saves & Storage",
-    "Bulk Import Prompts",
+    "Bulk Import from Text",
+    "Import from Screenshot",
     "Access to Guru Chat AI Assistant",
     "Advanced Search & Filtering",
     "Priority Support",

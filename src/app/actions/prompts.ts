@@ -1,6 +1,7 @@
 "use server";
 
 import { extractPrompts, type ExtractPromptsOutput } from "@/ai/flows/ai-bulk-import-extract-prompts";
+import { extractAndRefineFromImage, type ExtractAndRefineFromImageOutput } from "@/ai/flows/extract-and-refine-from-image";
 import { z } from "zod";
 
 const BulkImportSchema = z.object({
@@ -57,3 +58,56 @@ export async function handleBulkImport(
     };
   }
 }
+
+const ScreenshotImportSchema = z.object({
+    image: z.string().min(1, "Image data is required."),
+  });
+  
+  type ScreenshotImportState = {
+    message: string;
+    refinedPrompt: ExtractAndRefineFromImageOutput | null;
+    error?: boolean;
+  };
+  
+  export async function handleScreenshotImport(
+    prevState: ScreenshotImportState,
+    formData: FormData
+  ): Promise<ScreenshotImportState> {
+    const validatedFields = ScreenshotImportSchema.safeParse({
+      image: formData.get("image"),
+    });
+  
+    if (!validatedFields.success) {
+      return {
+        message: "Validation failed: Image is required.",
+        refinedPrompt: null,
+        error: true,
+      };
+    }
+  
+    try {
+      const refinedPrompt = await extractAndRefineFromImage({ imageDataUri: validatedFields.data.image });
+  
+      if (!refinedPrompt) {
+        return {
+          message: "Could not extract or refine a prompt from the image. Please try a different image.",
+          refinedPrompt: null,
+          error: true,
+        };
+      }
+      
+      return {
+        message: "Successfully extracted and refined prompt.",
+        refinedPrompt,
+        error: false,
+      };
+  
+    } catch (e) {
+      console.error(e);
+      return {
+        message: "An unexpected error occurred during the process.",
+        refinedPrompt: null,
+        error: true,
+      };
+    }
+  }
