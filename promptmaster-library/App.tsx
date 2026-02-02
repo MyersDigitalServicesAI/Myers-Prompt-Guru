@@ -50,11 +50,48 @@ const App: React.FC = () => {
     allPrompts.find(p => p.id === selectedPromptId) || null,
     [selectedPromptId, allPrompts]);
 
-  // --- Load User from LocalStorage ---
+  // --- Load User from LocalStorage & Handle Stripe Redirect ---
   useEffect(() => {
     const savedUser = localStorage.getItem('promptmaster_user');
+    let currentUser: User | null = null;
+
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      currentUser = JSON.parse(savedUser);
+      setUser(currentUser);
+    }
+
+    // Handle Payment Verification
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+
+    if (sessionId && currentUser && !currentUser.isPro) {
+      const verifyPayment = async () => {
+        try {
+          const response = await fetch('/api/verify-stripe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            const updatedUser = { ...currentUser!, isPro: true };
+            setUser(updatedUser);
+            localStorage.setItem('promptmaster_user', JSON.stringify(updatedUser));
+            showToast('Payment verified! Welcome to Pro.', 'success');
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            showToast('Payment verification failed.', 'error');
+          }
+        } catch (error) {
+          console.error('Verification error:', error);
+          showToast('An error occurred during verification.', 'error');
+        }
+      };
+
+      verifyPayment();
     }
   }, []);
 
