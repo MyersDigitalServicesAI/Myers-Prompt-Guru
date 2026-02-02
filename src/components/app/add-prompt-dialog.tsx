@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { handleBulkImport } from "@/app/actions/prompts";
 
 import { Button } from "@/components/ui/button";
@@ -53,9 +53,10 @@ function ExtractedPrompts({ prompts }: { prompts: ExtractPromptsOutput }) {
 
 export function AddPromptDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
-  const [formState, formAction] = useFormState(handleBulkImport, {
+  const [formState, formAction] = React.useActionState(handleBulkImport, {
     message: "",
     prompts: null,
+    error: false,
   });
 
   React.useEffect(() => {

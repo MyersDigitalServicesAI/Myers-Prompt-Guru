@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { Bot, Loader2, Send, Sparkles, User } from "lucide-react";
 
 import { handleChat } from "@/app/actions/chat";
@@ -43,7 +43,7 @@ export function GuruChat() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const scrollAreaRef = React.useRef<HTMLDivElement>(null);
 
-  const [formState, formAction] = useFormState(handleChat, {
+  const [formState, formAction] = React.useActionState(handleChat, {
     message: "",
     response: null,
     query: "",
