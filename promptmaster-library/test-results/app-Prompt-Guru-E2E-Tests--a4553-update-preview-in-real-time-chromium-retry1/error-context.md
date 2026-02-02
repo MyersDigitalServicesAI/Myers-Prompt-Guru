@@ -1,0 +1,311 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - heading "PromptMaster" [level=1] [ref=e11]
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - heading "AI Tools" [level=3] [ref=e14]
+        - button "Guru Chat PRO" [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+          - generic [ref=e19]: Guru Chat
+          - generic [ref=e20]: PRO
+      - generic [ref=e21]:
+        - heading "Discover" [level=3] [ref=e22]
+        - navigation [ref=e23]:
+          - button "All Prompts" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+            - text: All Prompts
+          - button "Coding & Development" [ref=e27] [cursor=pointer]:
+            - img [ref=e28]
+            - text: Coding & Development
+          - button "Writing & Content" [ref=e31] [cursor=pointer]:
+            - img [ref=e32]
+            - text: Writing & Content
+          - button "Marketing & SEO" [ref=e37] [cursor=pointer]:
+            - img [ref=e38]
+            - text: Marketing & SEO
+          - button "Business & Strategy" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+            - text: Business & Strategy
+          - button "Creative Arts" [ref=e45] [cursor=pointer]:
+            - img [ref=e46]
+            - text: Creative Arts
+          - button "Education & Learning" [ref=e52] [cursor=pointer]:
+            - img [ref=e53]
+            - text: Education & Learning
+      - generic [ref=e56]:
+        - heading "My Library" [level=3] [ref=e57]
+        - navigation [ref=e58]:
+          - button "Saved Prompts" [disabled] [ref=e59]:
+            - img [ref=e60]
+            - text: Saved Prompts
+          - button "History" [disabled] [ref=e62]:
+            - img [ref=e63]
+            - text: History
+        - generic [ref=e67]: Sign in to access your library and history.
+    - generic [ref=e69]:
+      - generic [ref=e70]:
+        - img [ref=e71]
+        - text: Go Pro
+      - paragraph [ref=e73]: Unlock Guru Chat & Unlimited Prompts.
+      - button "Upgrade $5/mo" [ref=e74] [cursor=pointer]
+  - main [ref=e75]:
+    - generic [ref=e76]:
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic:
+            - img
+          - textbox "Search... (Try 'var:Topic', '-python', or '#seo')" [ref=e79]
+          - generic:
+            - generic:
+              - img
+        - generic [ref=e80]:
+          - combobox [ref=e81] [cursor=pointer]:
+            - option "Newest"
+            - option "Highest Rated"
+            - option "Most Popular" [selected]
+          - combobox [ref=e82] [cursor=pointer]:
+            - option "All Ratings" [selected]
+            - option "4+ Stars"
+            - option "4.5+ Stars"
+      - generic [ref=e83]:
+        - button "Add Prompts" [ref=e84] [cursor=pointer]:
+          - img [ref=e85]
+          - generic [ref=e86]: Add Prompts
+        - button "Sign In" [ref=e87] [cursor=pointer]:
+          - img [ref=e88]
+          - generic [ref=e91]: Sign In
+    - generic [ref=e93]:
+      - generic [ref=e95]:
+        - heading "All Prompts" [level=2] [ref=e96]
+        - paragraph [ref=e97]: 8 results found
+      - generic [ref=e98]:
+        - generic [ref=e99] [cursor=pointer]:
+          - button "Save Prompt" [ref=e101]:
+            - img [ref=e102]
+          - generic [ref=e104]:
+            - generic [ref=e106]: Coding & Development
+            - heading "Code Refactoring Expert" [level=3] [ref=e107]
+            - generic [ref=e108]:
+              - generic [ref=e109]:
+                - generic [ref=e110]:
+                  - button [disabled] [ref=e111]:
+                    - img [ref=e112]
+                  - button [disabled] [ref=e114]:
+                    - img [ref=e115]
+                  - button [disabled] [ref=e117]:
+                    - img [ref=e118]
+                  - button [disabled] [ref=e120]:
+                    - img [ref=e121]
+                  - button [disabled] [ref=e123]:
+                    - img [ref=e124]
+                - generic [ref=e126]: "4.8"
+              - generic [ref=e127]: •
+              - button "2 reviews" [ref=e128]:
+                - img [ref=e129]
+                - text: 2 reviews
+            - paragraph [ref=e131]: Improve code quality, readability, and performance.
+            - img [ref=e134]
+        - generic [ref=e136] [cursor=pointer]:
+          - button "Save Prompt" [ref=e138]:
+            - img [ref=e139]
+          - generic [ref=e141]:
+            - generic [ref=e143]: Business & Strategy
+            - heading "Cold Email Outreach" [level=3] [ref=e144]
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - button [disabled] [ref=e148]:
+                    - img [ref=e149]
+                  - button [disabled] [ref=e151]:
+                    - img [ref=e152]
+                  - button [disabled] [ref=e154]:
+                    - img [ref=e155]
+                  - button [disabled] [ref=e157]:
+                    - img [ref=e158]
+                  - button [disabled] [ref=e160]:
+                    - img [ref=e161]
+                - generic [ref=e163]: "4.2"
+              - generic [ref=e164]: •
+              - button "1 reviews" [ref=e165]:
+                - img [ref=e166]
+                - text: 1 reviews
+            - paragraph [ref=e168]: Generate a compelling cold email for sales.
+            - img [ref=e171]
+        - generic [ref=e173] [cursor=pointer]:
+          - button "Save Prompt" [ref=e175]:
+            - img [ref=e176]
+          - generic [ref=e178]:
+            - generic [ref=e180]: Education & Learning
+            - heading "Complex Concept Simplifier" [level=3] [ref=e181]
+            - generic [ref=e182]:
+              - generic [ref=e183]:
+                - generic [ref=e184]:
+                  - button [disabled] [ref=e185]:
+                    - img [ref=e186]
+                  - button [disabled] [ref=e188]:
+                    - img [ref=e189]
+                  - button [disabled] [ref=e191]:
+                    - img [ref=e192]
+                  - button [disabled] [ref=e194]:
+                    - img [ref=e195]
+                  - button [disabled] [ref=e197]:
+                    - img [ref=e198]
+                - generic [ref=e200]: "4.9"
+              - generic [ref=e201]: •
+              - button "0 reviews" [ref=e202]:
+                - img [ref=e203]
+                - text: 0 reviews
+            - paragraph [ref=e205]: Explain difficult topics simply (Feynman Technique).
+            - img [ref=e208]
+        - generic [ref=e210] [cursor=pointer]:
+          - button "Save Prompt" [ref=e212]:
+            - img [ref=e213]
+          - generic [ref=e215]:
+            - generic [ref=e217]: Creative Arts
+            - heading "Story Plot Generator" [level=3] [ref=e218]
+            - generic [ref=e219]:
+              - generic [ref=e220]:
+                - generic [ref=e221]:
+                  - button [disabled] [ref=e222]:
+                    - img [ref=e223]
+                  - button [disabled] [ref=e225]:
+                    - img [ref=e226]
+                  - button [disabled] [ref=e228]:
+                    - img [ref=e229]
+                  - button [disabled] [ref=e231]:
+                    - img [ref=e232]
+                  - button [disabled] [ref=e234]:
+                    - img [ref=e235]
+                - generic [ref=e237]: "4.7"
+              - generic [ref=e238]: •
+              - button "0 reviews" [ref=e239]:
+                - img [ref=e240]
+                - text: 0 reviews
+            - paragraph [ref=e242]: Brainstorm creative story ideas.
+            - img [ref=e245]
+        - generic [ref=e247] [cursor=pointer]:
+          - button "Save Prompt" [ref=e249]:
+            - img [ref=e250]
+          - generic [ref=e252]:
+            - generic [ref=e254]: Coding & Development
+            - heading "Unit Test Generator" [level=3] [ref=e255]
+            - generic [ref=e256]:
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - button [disabled] [ref=e259]:
+                    - img [ref=e260]
+                  - button [disabled] [ref=e262]:
+                    - img [ref=e263]
+                  - button [disabled] [ref=e265]:
+                    - img [ref=e266]
+                  - button [disabled] [ref=e268]:
+                    - img [ref=e269]
+                  - button [disabled] [ref=e271]:
+                    - img [ref=e272]
+                - generic [ref=e274]: "4.6"
+              - generic [ref=e275]: •
+              - button "0 reviews" [ref=e276]:
+                - img [ref=e277]
+                - text: 0 reviews
+            - paragraph [ref=e279]: Create comprehensive unit tests.
+            - img [ref=e282]
+        - generic [ref=e284] [cursor=pointer]:
+          - button "Save Prompt" [ref=e286]:
+            - img [ref=e287]
+          - generic [ref=e289]:
+            - generic [ref=e291]: Marketing & SEO
+            - heading "SEO Blog Post Generator" [level=3] [ref=e292]
+            - generic [ref=e293]:
+              - generic [ref=e294]:
+                - generic [ref=e295]:
+                  - button [disabled] [ref=e296]:
+                    - img [ref=e297]
+                  - button [disabled] [ref=e299]:
+                    - img [ref=e300]
+                  - button [disabled] [ref=e302]:
+                    - img [ref=e303]
+                  - button [disabled] [ref=e305]:
+                    - img [ref=e306]
+                  - button [disabled] [ref=e308]:
+                    - img [ref=e309]
+                - generic [ref=e311]: "4.5"
+              - generic [ref=e312]: •
+              - button "0 reviews" [ref=e313]:
+                - img [ref=e314]
+                - text: 0 reviews
+            - paragraph [ref=e316]: Create SEO-optimized content for your blog.
+            - img [ref=e319]
+        - generic [ref=e321] [cursor=pointer]:
+          - button "Save Prompt" [ref=e323]:
+            - img [ref=e324]
+          - generic [ref=e326]:
+            - generic [ref=e328]: Writing & Content
+            - heading "Professional Bio" [level=3] [ref=e329]
+            - generic [ref=e330]:
+              - generic [ref=e331]:
+                - generic [ref=e332]:
+                  - button [disabled] [ref=e333]:
+                    - img [ref=e334]
+                  - button [disabled] [ref=e336]:
+                    - img [ref=e337]
+                  - button [disabled] [ref=e339]:
+                    - img [ref=e340]
+                  - button [disabled] [ref=e342]:
+                    - img [ref=e343]
+                  - button [disabled] [ref=e345]:
+                    - img [ref=e346]
+                - generic [ref=e348]: "4.3"
+              - generic [ref=e349]: •
+              - button "0 reviews" [ref=e350]:
+                - img [ref=e351]
+                - text: 0 reviews
+            - paragraph [ref=e353]: Create a bio for LinkedIn or a resume.
+            - img [ref=e356]
+        - generic [ref=e358] [cursor=pointer]:
+          - button "Save Prompt" [ref=e360]:
+            - img [ref=e361]
+          - generic [ref=e363]:
+            - generic [ref=e365]: Marketing & SEO
+            - heading "Social Media Caption" [level=3] [ref=e366]
+            - generic [ref=e367]:
+              - generic [ref=e368]:
+                - generic [ref=e369]:
+                  - button [disabled] [ref=e370]:
+                    - img [ref=e371]
+                  - button [disabled] [ref=e373]:
+                    - img [ref=e374]
+                  - button [disabled] [ref=e376]:
+                    - img [ref=e377]
+                  - button [disabled] [ref=e379]:
+                    - img [ref=e380]
+                  - button [disabled] [ref=e382]:
+                    - img [ref=e383]
+                - generic [ref=e385]: "4.0"
+              - generic [ref=e386]: •
+              - button "0 reviews" [ref=e387]:
+                - img [ref=e388]
+                - text: 0 reviews
+            - paragraph [ref=e390]: Engaging captions for Instagram or LinkedIn.
+            - img [ref=e393]
+  - generic [ref=e395]:
+    - generic [ref=e396]:
+      - generic [ref=e397]:
+        - img [ref=e399]
+        - generic [ref=e402]:
+          - heading "Prompt Guru" [level=3] [ref=e403]
+          - generic [ref=e406]: Online
+      - button [ref=e407] [cursor=pointer]:
+        - img [ref=e408]
+    - generic [ref=e413]: Hello! I'm your Prompt Engineering Guru. How can I help you refine your prompts today?
+    - generic [ref=e414]:
+      - generic [ref=e415]:
+        - textbox "Ask for help with a prompt..." [ref=e416]
+        - button [disabled] [ref=e417]:
+          - img [ref=e418]
+      - paragraph [ref=e421]: AI can make mistakes. Review generated prompts.
+```

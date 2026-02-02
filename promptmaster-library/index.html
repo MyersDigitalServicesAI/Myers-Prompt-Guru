@@ -1,48 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PromptMaster</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-            },
-            colors: {
-              slate: {
-                850: '#151F32',
-                900: '#0F172A',
-              }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Myers Prompt Guru | The Ultimate Prompt Engineering Library</title>
+  <meta name="description"
+    content="Discover, edit, and optimize AI prompts with Myers Prompt Guru. Features a real-time editor, AI-powered extraction, and specialized expert guidance." />
+  <meta name="keywords" content="AI, Prompt Engineering, LLM, Gemini, GPT, Prompt Library, Prompt Architecture" />
+
+  <!-- OpenGraph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Myers Prompt Guru | Prompt Engineering Excellence" />
+  <meta property="og:description"
+    content="Professional-grade prompt library with real-time variable injection and AI specialized guidance." />
+  <meta property="og:image" content="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="Myers Prompt Guru" />
+  <meta property="twitter:description" content="Professional-grade prompt library with real-time variable injection." />
+  <meta property="twitter:image"
+    content="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            slate: {
+              850: '#151F32',
+              900: '#0F172A',
             }
           }
         }
       }
-    </script>
-    <style>
-      body { background-color: #F8FAFC; }
-      /* Custom Scrollbar for aesthetic finish */
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAFC;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Premium Animations */
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
       }
-      ::-webkit-scrollbar-track {
-        background: transparent; 
+
+      50% {
+        transform: translateY(-3px);
       }
-      ::-webkit-scrollbar-thumb {
-        background: #CBD5E1; 
-        border-radius: 4px;
+
+      100% {
+        transform: translateY(0px);
       }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #94A3B8; 
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
       }
-    </style>
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    .shimmer {
+      background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite linear;
+    }
+
+    /* Transitions */
+    .page-transition {
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Custom Scrollbar for aesthetic finish */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F8FAFC;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #E2E8F0;
+      border-radius: 10px;
+      border: 2px solid #F8FAFC;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #CBD5E1;
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -54,10 +132,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
-    <div id="root"></div>
+
+<body>
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

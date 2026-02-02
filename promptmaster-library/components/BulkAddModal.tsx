@@ -7,14 +7,15 @@ interface BulkAddModalProps {
   isOpen: boolean;
   onClose: () => void;
   onImport: (prompts: ExtractedPrompt[]) => void;
+  onShowToast: (message: string, type: 'success' | 'error') => void;
 }
 
-export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onImport }) => {
+export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onImport, onShowToast }) => {
   const [step, setStep] = useState<'input' | 'processing' | 'review'>('input');
   const [text, setText] = useState('');
   const [extracted, setExtracted] = useState<ExtractedPrompt[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Image handling
   const [selectedImage, setSelectedImage] = useState<{ url: string; base64: string; mimeType: string } | null>(null);
 
@@ -60,7 +61,7 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
       // result looks like "data:image/png;base64,..."
       const [prefix, base64] = result.split(',');
       const mimeType = prefix.match(/:(.*?);/)?.[1] || 'image/png';
-      
+
       setSelectedImage({
         url: result,
         base64: base64,
@@ -92,7 +93,7 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
 
   const processContent = async () => {
     if (!text.trim() && !selectedImage) return;
-    
+
     setStep('processing');
     setError(null);
 
@@ -108,13 +109,16 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
       if (result.length === 0) {
         setError("No prompts could be identified. Try clearer text or a sharper image.");
         setStep('input');
+        onShowToast("Extraction failed: No prompts found.", 'error');
       } else {
         setExtracted(result);
         setStep('review');
+        onShowToast(`Successfully extracted ${result.length} prompts!`, 'success');
       }
     } catch (err) {
       setError("AI Service unavailable. Please check your API key or try again later.");
       setStep('input');
+      onShowToast("Extraction failed: AI Service Error.", 'error');
     }
   };
 
@@ -142,9 +146,9 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
-      
+
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100">
           <div className="flex items-center gap-3">
@@ -171,16 +175,16 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
                   {error}
                 </div>
               )}
-              
+
               <div className="relative">
                 {selectedImage ? (
                   <div className="w-full h-64 bg-slate-900 rounded-xl relative flex items-center justify-center overflow-hidden border border-slate-200">
-                    <img 
-                      src={selectedImage.url} 
-                      alt="Preview" 
+                    <img
+                      src={selectedImage.url}
+                      alt="Preview"
                       className="max-w-full max-h-full object-contain"
                     />
-                    <button 
+                    <button
                       onClick={() => setSelectedImage(null)}
                       className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-red-500 transition-colors"
                       title="Remove Image"
@@ -204,33 +208,33 @@ Supported:
                     className="w-full h-64 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none resize-none"
                   />
                 )}
-                
+
                 <div className="absolute bottom-4 right-4 flex gap-2">
-                  <input 
-                    type="file" 
+                  <input
+                    type="file"
                     ref={imageInputRef}
                     className="hidden"
                     accept="image/*"
                     onChange={handleFileUpload}
                   />
-                  <input 
-                    type="file" 
+                  <input
+                    type="file"
                     ref={fileInputRef}
                     className="hidden"
                     accept=".txt,.md,.csv,.json"
                     onChange={handleFileUpload}
                   />
-                  
+
                   {!selectedImage && (
                     <>
-                      <button 
+                      <button
                         onClick={() => imageInputRef.current?.click()}
                         className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-medium text-slate-600 hover:text-purple-600 hover:border-purple-200 transition-colors"
                       >
                         <Camera className="w-3 h-3" />
                         <span className="hidden sm:inline">Photo/Screenshot</span>
                       </button>
-                      <button 
+                      <button
                         onClick={() => fileInputRef.current?.click()}
                         className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-medium text-slate-600 hover:text-purple-600 hover:border-purple-200 transition-colors"
                       >
@@ -241,7 +245,7 @@ Supported:
                   )}
                 </div>
               </div>
-              
+
               <p className="text-xs text-slate-400 text-center">
                 Tip: You can paste screenshots (Ctrl+V) directly into the box.
               </p>
@@ -265,7 +269,7 @@ Supported:
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-slate-900">Found {extracted.length} Prompts</h3>
               </div>
-              
+
               <div className="grid gap-3">
                 {extracted.map((item, idx) => (
                   <div key={idx} className="p-4 border border-slate-200 rounded-lg bg-slate-50/50 flex gap-4">
@@ -287,15 +291,15 @@ Supported:
 
         {/* Footer */}
         <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end gap-3">
-          <button 
+          <button
             onClick={closeModal}
             className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition-colors"
           >
             Cancel
           </button>
-          
+
           {step === 'input' && (
-            <button 
+            <button
               onClick={processContent}
               disabled={!text.trim() && !selectedImage}
               className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-500/30 flex items-center gap-2"
@@ -306,7 +310,7 @@ Supported:
           )}
 
           {step === 'review' && (
-            <button 
+            <button
               onClick={handleFinalImport}
               className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-2"
             >

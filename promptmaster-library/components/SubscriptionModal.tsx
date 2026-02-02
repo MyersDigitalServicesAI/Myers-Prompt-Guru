@@ -26,9 +26,9 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      
+
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <button 
+        <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
         >
@@ -50,7 +50,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
         {/* Content */}
         <div className="p-8">
           <div className="flex items-baseline justify-center mb-8">
-            <span className="text-4xl font-bold text-slate-900">$5</span>
+            <span className="text-4xl font-bold text-slate-900">$5.00</span>
             <span className="text-slate-500 ml-1">/ month</span>
           </div>
 
@@ -59,25 +59,25 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
               <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <Check className="w-3 h-3" />
               </div>
-              <span className="text-sm font-medium">Access <span className="text-blue-600 font-bold">Prompt Guru GPT</span></span>
+              <span className="text-sm font-medium">Access to <span className="text-blue-600 font-bold">LLM Guru</span> (Prompt Architect)</span>
             </li>
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <Check className="w-3 h-3" />
               </div>
-              <span className="text-sm">Unlimited AI Analysis & Bulk Imports</span>
+              <span className="text-sm">Edge-Based <span className="text-blue-600 font-bold">Screenshot & Photo</span> Extraction</span>
             </li>
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <Check className="w-3 h-3" />
               </div>
-              <span className="text-sm">Save unlimited prompts to library</span>
+              <span className="text-sm">Batch / <span className="text-blue-600 font-bold">Bulk Upload</span> existing prompts</span>
             </li>
             <li className="flex items-center gap-3 text-slate-700">
               <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                 <Check className="w-3 h-3" />
               </div>
-              <span className="text-sm">Priority Support</span>
+              <span className="text-sm">Unlimited Library Storage</span>
             </li>
           </ul>
 
@@ -98,7 +98,7 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
               </>
             )}
           </button>
-          
+
           <p className="text-xs text-center text-slate-400 mt-4">
             Secure payment via MockStripe. Cancel anytime.
           </p>

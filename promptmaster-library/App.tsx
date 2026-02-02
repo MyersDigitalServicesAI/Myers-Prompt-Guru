@@ -10,7 +10,9 @@ import { Category, VariableMap, User, SortOption, Prompt, Comment } from './type
 import { PROMPTS } from './data';
 import { extractVariables } from './utils';
 import { ExtractedPrompt } from './services/gemini';
-import { Menu, Search, Filter, LogIn, LogOut, User as UserIcon, Star, Plus, Info, Sparkles } from 'lucide-react';
+import { Menu, Search, Filter, LogIn, LogOut, User as UserIcon, Star, Plus, Info, Sparkles, X } from 'lucide-react';
+import { PromptEditor } from './components/PromptEditor';
+import { Toast, ToastType } from './components/Toast';
 
 const App: React.FC = () => {
   // --- Global State ---
@@ -18,7 +20,7 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [variableValues, setVariableValues] = useState<VariableMap>({});
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+
   // Data State (Mutable for ratings)
   const [allPrompts, setAllPrompts] = useState<Prompt[]>(PROMPTS);
 
@@ -30,15 +32,23 @@ const App: React.FC = () => {
   // Feature State
   const [isGuruOpen, setIsGuruOpen] = useState(false);
 
-  // Review State
+  // Interaction State
+  const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
   const [reviewPromptId, setReviewPromptId] = useState<string | null>(null);
-
-  // Bulk Add State
   const [isBulkAddOpen, setIsBulkAddOpen] = useState(false);
-
-  // Filter & Sort State
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.POPULAR);
   const [minRating, setMinRating] = useState<number>(0);
+
+  // Global Toast State
+  const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
+
+  const showToast = (message: string, type: ToastType = 'success') => {
+    setToast({ message, type });
+  };
+
+  const selectedPrompt = useMemo(() =>
+    allPrompts.find(p => p.id === selectedPromptId) || null,
+    [selectedPromptId, allPrompts]);
 
   // --- Load User from LocalStorage ---
   useEffect(() => {
@@ -70,7 +80,7 @@ const App: React.FC = () => {
       const query = searchQuery.toLowerCase();
       // Parse tokens handling basic spaces. (Quotes support could be added but space split is standard for this scope)
       const tokens = query.match(/[^\s"]+|"[^"]*"/g) || [];
-      
+
       const constraints = tokens.map(token => {
         const cleanToken = token.replace(/^"|"$/g, '');
         if (cleanToken.startsWith('-')) return { type: 'exclude', value: cleanToken.slice(1) };
@@ -87,7 +97,7 @@ const App: React.FC = () => {
 
         return constraints.every(c => {
           if (!c.value) return true; // Ignore empty tokens
-          
+
           switch (c.type) {
             case 'exclude':
               return !searchableText.includes(c.value);
@@ -163,10 +173,10 @@ const App: React.FC = () => {
       return;
     }
     const isSaved = user.savedPrompts.includes(promptId);
-    const newSaved = isSaved 
+    const newSaved = isSaved
       ? user.savedPrompts.filter(id => id !== promptId)
       : [...user.savedPrompts, promptId];
-    
+
     const updatedUser = { ...user, savedPrompts: newSaved };
     setUser(updatedUser);
     localStorage.setItem('promptmaster_user', JSON.stringify(updatedUser));
@@ -180,11 +190,12 @@ const App: React.FC = () => {
     const updatedUser = { ...user, history: trimmed };
     setUser(updatedUser);
     localStorage.setItem('promptmaster_user', JSON.stringify(updatedUser));
+    showToast('Prompt copied to clipboard!');
   };
 
   const submitReview = (rating: number, text: string) => {
     if (!reviewPromptId || !user) return;
-    
+
     setAllPrompts(prev => prev.map(p => {
       if (p.id === reviewPromptId) {
         const newReview: Comment = {
@@ -225,10 +236,10 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
-      
+
       {/* Navigation */}
-      <Sidebar 
-        activeCategory={activeCategory} 
+      <Sidebar
+        activeCategory={activeCategory}
         onSelectCategory={setActiveCategory}
         isOpen={isSidebarOpen}
         onCloseMobile={() => setIsSidebarOpen(false)}
@@ -240,11 +251,11 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
-        
+
         {/* Top Header */}
         <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10 sticky top-0 shadow-sm">
           <div className="flex items-center gap-4 w-full max-w-4xl">
-            <button 
+            <button
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-md"
             >
@@ -265,22 +276,22 @@ const App: React.FC = () => {
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="relative group/tooltip">
-                   <Info className="h-4 w-4 text-slate-400" />
-                   <div className="absolute right-0 top-6 w-64 p-3 bg-slate-800 text-slate-200 text-xs rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50">
-                     <p className="font-semibold mb-1 text-white">Advanced Search:</p>
-                     <ul className="space-y-1">
-                       <li><code className="bg-slate-700 px-1 rounded">var:name</code> - Contains variable</li>
-                       <li><code className="bg-slate-700 px-1 rounded">-text</code> - Exclude text</li>
-                       <li><code className="bg-slate-700 px-1 rounded">#tag</code> - Filter by tag</li>
-                     </ul>
-                   </div>
+                  <Info className="h-4 w-4 text-slate-400" />
+                  <div className="absolute right-0 top-6 w-64 p-3 bg-slate-800 text-slate-200 text-xs rounded-lg shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50">
+                    <p className="font-semibold mb-1 text-white">Advanced Search:</p>
+                    <ul className="space-y-1">
+                      <li><code className="bg-slate-700 px-1 rounded">var:name</code> - Contains variable</li>
+                      <li><code className="bg-slate-700 px-1 rounded">-text</code> - Exclude text</li>
+                      <li><code className="bg-slate-700 px-1 rounded">#tag</code> - Filter by tag</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Sorting & Filter Controls */}
             <div className="hidden md:flex items-center gap-3 border-l border-slate-200 pl-4">
-              <select 
+              <select
                 value={sortOption}
                 onChange={(e) => setSortOption(e.target.value as SortOption)}
                 className="text-sm font-medium text-slate-600 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-600"
@@ -288,7 +299,7 @@ const App: React.FC = () => {
                 {Object.values(SortOption).map(opt => <option key={opt} value={opt}>{opt}</option>)}
               </select>
 
-              <select 
+              <select
                 value={minRating}
                 onChange={(e) => setMinRating(Number(e.target.value))}
                 className="text-sm font-medium text-slate-600 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-600"
@@ -299,12 +310,12 @@ const App: React.FC = () => {
               </select>
             </div>
           </div>
-          
+
           {/* User Auth & Actions */}
           <div className="flex items-center gap-3">
             {/* Quick Guru Button for Pro Users */}
             {user?.isPro && (
-              <button 
+              <button
                 onClick={() => setIsGuruOpen(!isGuruOpen)}
                 className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all border ${isGuruOpen ? 'bg-purple-100 border-purple-200 text-purple-700' : 'bg-white border-slate-200 text-slate-600 hover:text-purple-600 hover:border-purple-200'}`}
               >
@@ -313,7 +324,7 @@ const App: React.FC = () => {
               </button>
             )}
 
-             <button
+            <button
               onClick={() => {
                 if (!user) setAuthModalOpen(true);
                 else if (!user.isPro) setSubscriptionModalOpen(true);
@@ -343,7 +354,7 @@ const App: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={() => setAuthModalOpen(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg font-medium text-sm"
               >
@@ -357,92 +368,100 @@ const App: React.FC = () => {
         {/* Scrollable Canvas */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50/50">
           <div className="max-w-7xl mx-auto pb-20">
-            
-            {/* Category Header */}
-            <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900">
-                  {activeCategory === 'saved' ? 'Saved Prompts' : 
-                   activeCategory === 'history' ? 'Recently Used' : 
-                   activeCategory}
-                </h2>
-                <p className="text-slate-500 mt-1">
-                  {filteredPrompts.length} result{filteredPrompts.length !== 1 ? 's' : ''} found
-                  {minRating > 0 && ` with ${minRating}+ stars`}
-                </p>
-              </div>
-              
-              {/* Mobile Add Button */}
-              <button
-                onClick={() => {
-                  if (!user) setAuthModalOpen(true);
-                  else if (!user.isPro) setSubscriptionModalOpen(true);
-                  else setIsBulkAddOpen(true);
-                }}
-                className="sm:hidden w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md font-medium text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                Add Prompts
-              </button>
-            </div>
 
-            {/* Prompts Grid */}
-            {filteredPrompts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredPrompts.map(prompt => (
-                  <PromptCard 
-                    key={prompt.id} 
-                    prompt={prompt} 
-                    variableValues={variableValues}
-                    onVariableChange={handleVariableChange}
-                    user={user}
-                    isSaved={user?.savedPrompts.includes(prompt.id) || false}
-                    onToggleSave={toggleSave}
-                    onCopy={addToHistory}
-                    onRateClick={(id) => {
-                      if (!user) setAuthModalOpen(true);
-                      else setReviewPromptId(id);
-                    }}
-                  />
-                ))}
-              </div>
+            {selectedPrompt ? (
+              <PromptEditor
+                prompt={selectedPrompt}
+                onClose={() => setSelectedPromptId(null)}
+                onCopySuccess={addToHistory}
+              />
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-slate-200 border-dashed">
-                <div className="bg-slate-50 p-4 rounded-full mb-4">
-                  <Filter className="w-8 h-8 text-slate-400" />
+              <>
+                {/* Category Header */}
+                <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-900">
+                      {activeCategory === 'saved' ? 'Saved Prompts' :
+                        activeCategory === 'history' ? 'Recently Used' :
+                          activeCategory}
+                    </h2>
+                    <p className="text-slate-500 mt-1">
+                      {filteredPrompts.length} result{filteredPrompts.length !== 1 ? 's' : ''} found
+                      {minRating > 0 && ` with ${minRating}+ stars`}
+                    </p>
+                  </div>
+
+                  {/* Mobile Add Button */}
+                  <button
+                    onClick={() => {
+                      if (!user) setAuthModalOpen(true);
+                      else if (!user.isPro) setSubscriptionModalOpen(true);
+                      else setIsBulkAddOpen(true);
+                    }}
+                    className="sm:hidden w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md font-medium text-sm"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Prompts
+                  </button>
                 </div>
-                <h3 className="text-lg font-medium text-slate-900">No prompts found</h3>
-                <p className="text-slate-500 mt-1 max-w-sm">
-                  {searchQuery 
-                    ? `No results matching "${searchQuery}"` 
-                    : "Try adjusting your filters or category selection."}
-                </p>
-                <button 
-                  onClick={() => {
-                    setSearchQuery(''); 
-                    setActiveCategory(Category.ALL);
-                    setMinRating(0);
-                  }}
-                  className="mt-6 px-5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
-                >
-                  Clear all filters
-                </button>
-              </div>
+
+                {/* Prompts Grid */}
+                {filteredPrompts.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {filteredPrompts.map(prompt => (
+                      <PromptCard
+                        key={prompt.id}
+                        prompt={prompt}
+                        user={user}
+                        isSaved={user?.savedPrompts.includes(prompt.id) || false}
+                        onToggleSave={toggleSave}
+                        onSelect={() => setSelectedPromptId(prompt.id)}
+                        onRateClick={(id) => {
+                          if (!user) setAuthModalOpen(true);
+                          else setReviewPromptId(id);
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-slate-200 border-dashed">
+                    <div className="bg-slate-50 p-4 rounded-full mb-4">
+                      <Filter className="w-8 h-8 text-slate-400" />
+                    </div>
+                    <h3 className="text-lg font-medium text-slate-900">No prompts found</h3>
+                    <p className="text-slate-500 mt-1 max-w-sm">
+                      {searchQuery
+                        ? `No results matching "${searchQuery}"`
+                        : "Try adjusting your filters or category selection."}
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setActiveCategory(Category.ALL);
+                        setMinRating(0);
+                      }}
+                      className="mt-6 px-5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </main>
 
       {/* Side Panels & Modals */}
-      <GuruChat 
-        isOpen={isGuruOpen} 
-        onClose={() => setIsGuruOpen(false)} 
+      <GuruChat
+        isOpen={isGuruOpen}
+        onClose={() => setIsGuruOpen(false)}
       />
 
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
-        onLogin={handleLogin} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onLogin={handleLogin}
       />
 
       <SubscriptionModal
@@ -451,18 +470,27 @@ const App: React.FC = () => {
         onUpgrade={handleUpgrade}
       />
 
-      <ReviewModal 
+      <ReviewModal
         isOpen={!!reviewPromptId}
         onClose={() => setReviewPromptId(null)}
         onSubmit={submitReview}
         promptTitle={allPrompts.find(p => p.id === reviewPromptId)?.title || ''}
       />
-      
+
       <BulkAddModal
         isOpen={isBulkAddOpen}
         onClose={() => setIsBulkAddOpen(false)}
         onImport={handleBulkImport}
+        onShowToast={showToast}
       />
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };

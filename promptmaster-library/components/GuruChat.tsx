@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Bot, User as UserIcon, Loader2, Sparkles } from 'lucide-react';
-import { createGuruChatSession } from '../services/gemini';
+import { sendGuruMessage } from '../services/gemini';
 import { ChatMessage } from '../types';
-import { Chat, GenerateContentResponse } from "@google/genai";
 
 interface GuruChatProps {
   isOpen: boolean;
@@ -15,15 +14,7 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const chatSessionRef = useRef<Chat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Initialize chat session
-  useEffect(() => {
-    if (isOpen && !chatSessionRef.current) {
-      chatSessionRef.current = createGuruChatSession();
-    }
-  }, [isOpen]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -31,17 +22,19 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
   }, [messages]);
 
   const handleSend = async () => {
-    if (!input.trim() || !chatSessionRef.current) return;
+    if (!input.trim() || isLoading) return;
 
     const userMsg: ChatMessage = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMsg]);
+    const currentMessages = [...messages, userMsg];
+
+    setMessages(currentMessages);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await chatSessionRef.current.sendMessage({ message: userMsg.text });
+      const response = await sendGuruMessage(currentMessages);
       const modelText = response.text || "I apologize, I couldn't generate a response.";
-      
+
       setMessages(prev => [...prev, { role: 'model', text: modelText }]);
     } catch (error) {
       console.error("Guru Error:", error);
@@ -55,7 +48,7 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
     <>
       {/* Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/20 z-40 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
@@ -66,7 +59,7 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
         fixed top-0 right-0 bottom-0 w-full sm:w-[400px] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-slate-200 flex flex-col
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
-        
+
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-3">
@@ -89,14 +82,14 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
           {messages.map((msg, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`
                 max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap
-                ${msg.role === 'user' 
-                  ? 'bg-slate-900 text-white rounded-br-none shadow-md' 
+                ${msg.role === 'user'
+                  ? 'bg-slate-900 text-white rounded-br-none shadow-md'
                   : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm'}
               `}>
                 {msg.text}
@@ -105,10 +98,10 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-               <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
-                 <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
-                 <span className="text-xs text-slate-400">Thinking...</span>
-               </div>
+              <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
+                <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
+                <span className="text-xs text-slate-400">Thinking...</span>
+              </div>
             </div>
           )}
           <div ref={messagesEndRef} />
