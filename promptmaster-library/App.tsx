@@ -10,9 +10,11 @@ import { Category, VariableMap, User, SortOption, Prompt, Comment } from './type
 import { PROMPTS } from './data';
 import { extractVariables } from './utils';
 import { ExtractedPrompt } from './services/gemini';
-import { Menu, Search, Filter, LogIn, LogOut, User as UserIcon, Star, Plus, Info, Sparkles, X } from 'lucide-react';
+import { Menu, Search, Filter, LogIn, LogOut, User as UserIcon, Star, Plus, Info, Sparkles, X, ShieldCheck, Scale } from 'lucide-react';
 import { PromptEditor } from './components/PromptEditor';
 import { Toast, ToastType } from './components/Toast';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
+import { TermsOfService } from './components/TermsOfService';
 
 const App: React.FC = () => {
   // --- Global State ---
@@ -38,6 +40,7 @@ const App: React.FC = () => {
   const [isBulkAddOpen, setIsBulkAddOpen] = useState(false);
   const [sortOption, setSortOption] = useState<SortOption>(SortOption.POPULAR);
   const [minRating, setMinRating] = useState<number>(0);
+  const [activeLegalView, setActiveLegalView] = useState<'privacy' | 'terms' | null>(null);
 
   // Global Toast State
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
@@ -486,6 +489,31 @@ const App: React.FC = () => {
               </>
             )}
           </div>
+
+          {/* Footer */}
+          <footer className="max-w-7xl mx-auto py-12 px-6 border-t border-slate-200 mt-20 flex flex-col md:flex-row items-center justify-between gap-6 text-slate-500 text-sm">
+            <div className="flex items-center gap-2 font-bold text-slate-900">
+              <Sparkles className="w-5 h-5 text-blue-600" />
+              Myers Prompt Guru
+            </div>
+            <div className="flex items-center gap-8">
+              <button
+                onClick={() => setActiveLegalView('privacy')}
+                className="hover:text-blue-600 transition-colors flex items-center gap-1.5"
+              >
+                <ShieldCheck className="w-4 h-4" /> Privacy Policy
+              </button>
+              <button
+                onClick={() => setActiveLegalView('terms')}
+                className="hover:text-blue-600 transition-colors flex items-center gap-1.5"
+              >
+                <Scale className="w-4 h-4" /> Terms of Service
+              </button>
+            </div>
+            <div>
+              &copy; 2026 Myers Digital Services
+            </div>
+          </footer>
         </div>
       </main>
 
@@ -527,6 +555,13 @@ const App: React.FC = () => {
           type={toast.type}
           onClose={() => setToast(null)}
         />
+      )}
+
+      {activeLegalView === 'privacy' && (
+        <PrivacyPolicy onClose={() => setActiveLegalView(null)} />
+      )}
+      {activeLegalView === 'terms' && (
+        <TermsOfService onClose={() => setActiveLegalView(null)} />
       )}
     </div>
   );
