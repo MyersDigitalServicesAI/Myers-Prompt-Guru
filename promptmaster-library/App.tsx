@@ -24,7 +24,11 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Data State (Mutable for ratings)
-  const [allPrompts, setAllPrompts] = useState<Prompt[]>(PROMPTS);
+  // Data State (Initial load from static data + localStorage)
+  const [allPrompts, setAllPrompts] = useState<Prompt[]>(() => {
+    const saved = localStorage.getItem('promptmaster_library');
+    return saved ? JSON.parse(saved) : PROMPTS;
+  });
 
   // Auth State
   const [user, setUser] = useState<User | null>(null);
@@ -97,6 +101,11 @@ const App: React.FC = () => {
       verifyPayment();
     }
   }, []);
+
+  // --- Save Library to LocalStorage ---
+  useEffect(() => {
+    localStorage.setItem('promptmaster_library', JSON.stringify(allPrompts));
+  }, [allPrompts]);
 
   // --- Filtering Logic ---
   const filteredPrompts = useMemo(() => {
