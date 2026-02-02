@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,11 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Check, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 const proFeatures = [
-    "Unlimited Prompt Saves",
+    "Unlimited Prompt Saves & Storage",
+    "Bulk Import Prompts",
     "Access to Guru Chat AI Assistant",
     "Advanced Search & Filtering",
     "Priority Support",
@@ -44,12 +47,14 @@ export function GoProDialog({ children }: { children: React.ReactNode }) {
             </ul>
         </div>
         <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2">
-          <Button type="button" className="w-full">
-            Upgrade for $5/month
-          </Button>
-          <Button type="button" variant="ghost" className="w-full">
-            Not now
-          </Button>
+          <Link href="https://buy.stripe.com/00w7sM0ob4h88Of1JqbQY0b" target="_blank" className={buttonVariants({className: "w-full"})}>
+            Upgrade for $5.00
+          </Link>
+          <DialogClose asChild>
+            <Button type="button" variant="ghost" className="w-full">
+                Not now
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

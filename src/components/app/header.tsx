@@ -27,6 +27,7 @@ import { SidebarTrigger } from '../ui/sidebar';
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
+  const isPro = false; // This will be replaced with actual user data
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -52,12 +53,21 @@ export function AppHeader() {
                 Go Pro
             </Button>
         </GoProDialog>
-        <AddPromptDialog>
+        {isPro ? (
+          <AddPromptDialog>
+              <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Prompt
+              </Button>
+          </AddPromptDialog>
+        ) : (
+          <GoProDialog>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Prompt
             </Button>
-        </AddPromptDialog>
+          </GoProDialog>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">

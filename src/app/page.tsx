@@ -8,10 +8,14 @@ import { VariableInputs } from '@/components/app/variable-inputs';
 import { prompts as initialPrompts, type Prompt } from '@/lib/prompts';
 import { GuruChat } from '@/components/app/guru-chat';
 import { SidebarInset } from '@/components/ui/sidebar';
+import { GoProDialog } from '@/components/app/go-pro-dialog';
+import { Button } from '@/components/ui/button';
+import { Sparkles } from 'lucide-react';
 
 export default function DashboardPage() {
   const [prompts] = React.useState<Prompt[]>(initialPrompts);
   const [variables, setVariables] = React.useState<Record<string, string>>({});
+  const isPro = false; // This will be replaced with actual user data
 
   const allVariables = React.useMemo(() => {
     const varSet = new Set<string>();
@@ -57,7 +61,17 @@ export default function DashboardPage() {
             ))}
           </div>
         </main>
-        <GuruChat />
+        {isPro ? <GuruChat /> : (
+          <GoProDialog>
+            <Button
+                variant="default"
+                className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg"
+                >
+                <Sparkles className="h-6 w-6" />
+                <span className="sr-only">Open Guru Chat</span>
+            </Button>
+          </GoProDialog>
+        )}
       </SidebarInset>
     </>
   );
