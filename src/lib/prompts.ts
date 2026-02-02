@@ -1,0 +1,84 @@
+export type Prompt = {
+  id: string;
+  title: string;
+  description: string;
+  template: string;
+  category: string;
+  tags: string[];
+  isBookmarked: boolean;
+};
+
+export const prompts: Prompt[] = [
+  {
+    id: '1',
+    title: 'Creative Story Starter',
+    description: 'Generates a compelling opening line for a story based on a genre and a character.',
+    template: 'Write the opening paragraph for a [genre] story featuring a [character_type] named [character_name].',
+    category: 'Creative',
+    tags: ['writing', 'fiction', 'storytelling'],
+    isBookmarked: true,
+  },
+  {
+    id: '2',
+    title: 'Marketing Email Copy',
+    description: 'Crafts a persuasive marketing email for a new product launch.',
+    template: 'Draft a marketing email to announce our new product, [product_name]. The target audience is [audience] and the key benefit is [benefit].',
+    category: 'Marketing',
+    tags: ['email', 'copywriting', 'sales'],
+    isBookmarked: false,
+  },
+  {
+    id: '3',
+    title: 'Technical Bug Report',
+    description: 'Generates a clear and concise bug report for software development.',
+    template: 'Create a bug report for an issue in the [app_feature] feature. The user action was "[user_action]", the expected result was "[expected_result]", and the actual result was "[actual_result]".',
+    category: 'Technical',
+    tags: ['development', 'debugging', 'qa'],
+    isBookmarked: false,
+  },
+  {
+    id: '4',
+    title: 'Social Media Post Idea',
+    description: 'Generates a social media post for a specific platform and topic.',
+    template: 'Come up with a [platform] post about [topic]. The desired tone is [tone] and it should include a call to action to "[cta]".',
+    category: 'Marketing',
+    tags: ['social media', 'content creation'],
+    isBookmarked: true,
+  },
+    {
+    id: '5',
+    title: 'Recipe Generator',
+    description: 'Creates a simple recipe based on a main ingredient and a type of cuisine.',
+    template: 'Generate a simple recipe for a [cuisine] dish where the main ingredient is [main_ingredient]. The recipe should take less than [time_minutes] minutes to prepare.',
+    category: 'Lifestyle',
+    tags: ['cooking', 'food', 'recipe'],
+    isBookmarked: false,
+  },
+  {
+    id: '6',
+    title: 'Code Explanation',
+    description: 'Explains a piece of code in simple terms.',
+    template: 'Explain the following [language] code snippet in plain English for a beginner: `[code_snippet]`',
+    category: 'Technical',
+    tags: ['code', 'programming', 'education'],
+    isBookmarked: false,
+  },
+  {
+    id: '7',
+    title: 'Personalized Workout Plan',
+    description: 'Generates a workout plan based on user goals and preferences.',
+    template: 'Create a 4-day workout plan for someone whose goal is [fitness_goal]. They have access to [equipment] and can work out for [duration] per session.',
+    category: 'Health',
+    tags: ['fitness', 'workout', 'health'],
+    isBookmarked: false,
+  },
+  {
+    id: '8',
+    title: 'Travel Itinerary',
+    description: 'Creates a travel itinerary for a given destination and duration.',
+    template: 'Plan a [duration_days]-day travel itinerary for a trip to [destination]. The traveler is interested in [interests] and has a budget of [budget].',
+    category: 'Lifestyle',
+    tags: ['travel', 'planning', 'itinerary'],
+    isBookmarked: false,
+  },
+];
