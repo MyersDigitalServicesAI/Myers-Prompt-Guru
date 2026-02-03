@@ -22,10 +22,22 @@ import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AddPromptDialog } from './add-prompt-dialog';
 import { SidebarTrigger } from '../ui/sidebar';
+import { useAuth, useUser } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 
 export function AppHeader() {
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+  
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
   const isPro = true; // This will be replaced with actual user data
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -55,17 +67,17 @@ export function AppHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
-                {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User Avatar" data-ai-hint={userAvatar.imageHint} />}
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt={user?.displayName ?? "User Avatar"} data-ai-hint={userAvatar?.imageHint} />
+                <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">User Name</p>
+                <p className="text-sm font-medium leading-none">{user?.displayName || 'User'}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  user@example.com
+                  {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -83,11 +95,9 @@ export function AppHeader() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/login">
+            <DropdownMenuItem onClick={handleSignOut}>
                 <LogOut className="mr-2" />
                 <span>Log out</span>
-              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

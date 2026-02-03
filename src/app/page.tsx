@@ -11,11 +11,34 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { GoProDialog } from '@/components/app/go-pro-dialog';
 import { Button } from '@/components/ui/button';
 import { Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function DashboardLoading() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <Sparkles className="h-12 w-12 animate-pulse text-primary" />
+        <p className="text-muted-foreground">Loading Your Workspace...</p>
+      </div>
+    </div>
+  )
+}
 
 export default function DashboardPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
   const [prompts] = React.useState<Prompt[]>(initialPrompts);
   const [variables, setVariables] = React.useState<Record<string, string>>({});
-  const isPro = true; // This will be replaced with actual user data
+  const isPro = true; // This will be replaced with actual user data from Firestore
+
+  React.useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
 
   const allVariables = React.useMemo(() => {
     const varSet = new Set<string>();
@@ -37,6 +60,10 @@ export default function DashboardPage() {
     });
     setVariables(initialVars);
   }, [allVariables]);
+
+  if (isUserLoading || !user) {
+    return <DashboardLoading />;
+  }
 
   return (
     <>

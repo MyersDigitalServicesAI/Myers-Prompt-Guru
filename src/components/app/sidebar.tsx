@@ -41,6 +41,7 @@ import { AppLogo } from './app-logo';
 import { AddPromptDialog } from './add-prompt-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useUser } from '@/firebase';
 
 const categories = [
   { name: 'Creative', icon: Sparkles },
@@ -52,6 +53,7 @@ const categories = [
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
   const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(true);
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
 
@@ -127,10 +129,10 @@ export function AppSidebar() {
             <SidebarMenuButton href="/profile" tooltip="Profile">
                 <div className='flex items-center gap-2'>
                     <Avatar className="h-7 w-7">
-                        {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User Avatar" data-ai-hint={userAvatar.imageHint} />}
-                        <AvatarFallback>U</AvatarFallback>
+                        <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt={user?.displayName ?? "User Avatar"} />
+                        <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
                     </Avatar>
-                    <span className="truncate">User Name</span>
+                    <span className="truncate">{user?.displayName || 'User'}</span>
                 </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
