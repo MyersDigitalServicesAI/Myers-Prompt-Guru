@@ -41,7 +41,6 @@ import { AppLogo } from './app-logo';
 import { AddPromptDialog } from './add-prompt-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { GoProDialog } from './go-pro-dialog';
 
 const categories = [
   { name: 'Creative', icon: Sparkles },
@@ -55,7 +54,6 @@ export function AppSidebar() {
   const pathname = usePathname();
   const [isCategoriesOpen, setIsCategoriesOpen] = React.useState(true);
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
-  const isPro = false; // This will be replaced with actual user data
 
   return (
     <Sidebar>
@@ -64,21 +62,12 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <div className="p-2">
-            {isPro ? (
-              <AddPromptDialog>
-                  <Button variant="outline" className="w-full">
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add Prompt
-                  </Button>
-              </AddPromptDialog>
-            ) : (
-              <GoProDialog>
+            <AddPromptDialog>
                 <Button variant="outline" className="w-full">
                     <Plus className="mr-2 h-4 w-4" />
                     Add Prompt
                 </Button>
-              </GoProDialog>
-            )}
+            </AddPromptDialog>
         </div>
         <SidebarMenu>
           <SidebarMenuItem>

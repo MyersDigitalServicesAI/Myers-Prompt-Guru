@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { handleScreenshotImport } from "@/app/actions/prompts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export function ScreenshotImportTab() {
   const formRef = React.useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-  const [formState, formAction] = useFormState(handleScreenshotImport, {
+  const [formState, formAction] = React.useActionState(handleScreenshotImport, {
     message: "",
     refinedPrompt: null,
     error: false,

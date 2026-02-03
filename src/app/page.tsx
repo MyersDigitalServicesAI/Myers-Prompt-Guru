@@ -15,7 +15,7 @@ import { Sparkles } from 'lucide-react';
 export default function DashboardPage() {
   const [prompts] = React.useState<Prompt[]>(initialPrompts);
   const [variables, setVariables] = React.useState<Record<string, string>>({});
-  const isPro = false; // This will be replaced with actual user data
+  const isPro = true; // This will be replaced with actual user data
 
   const allVariables = React.useMemo(() => {
     const varSet = new Set<string>();

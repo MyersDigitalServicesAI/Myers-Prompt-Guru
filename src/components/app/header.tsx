@@ -16,18 +16,16 @@ import {
   PlusCircle,
   Search,
   Settings,
-  Sparkles,
   User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AddPromptDialog } from './add-prompt-dialog';
-import { GoProDialog } from './go-pro-dialog';
 import { SidebarTrigger } from '../ui/sidebar';
 
 export function AppHeader() {
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
-  const isPro = false; // This will be replaced with actual user data
+  const isPro = true; // This will be replaced with actual user data
 
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -47,27 +45,12 @@ export function AppHeader() {
         </form>
       </div>
       <div className="flex items-center gap-2">
-        <GoProDialog>
-            <Button variant="outline">
-                <Sparkles className="mr-2 h-4 w-4" />
-                Go Pro
-            </Button>
-        </GoProDialog>
-        {isPro ? (
-          <AddPromptDialog>
-              <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add Prompt
-              </Button>
-          </AddPromptDialog>
-        ) : (
-          <GoProDialog>
+        <AddPromptDialog>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Prompt
             </Button>
-          </GoProDialog>
-        )}
+        </AddPromptDialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
