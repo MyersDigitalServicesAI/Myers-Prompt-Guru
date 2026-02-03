@@ -11,12 +11,13 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Clipboard, Star } from 'lucide-react';
+import { Bookmark, Clipboard } from 'lucide-react';
 import { type Prompt } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore, updateDocumentNonBlocking } from '@/firebase';
 import { doc } from 'firebase/firestore';
+import Link from 'next/link';
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -33,7 +34,9 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
     });
   }, [prompt.template, variables]);
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     const rawText = prompt.template.replace(/\[(.*?)\]/g, (match, varName) => {
       return variables[varName] || match;
     });
@@ -44,7 +47,9 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
     });
   };
 
-  const handleBookmark = () => {
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (!prompt.userId || !prompt.id) return;
 
     const promptRef = doc(firestore, 'users', prompt.userId, 'prompts', prompt.id);
@@ -69,45 +74,41 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
   };
 
   return (
-    <Card className="flex flex-col">
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <CardTitle className="text-lg">{prompt.title}</CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 shrink-0"
-            onClick={handleBookmark}
-          >
-            <Bookmark className={cn('h-5 w-5', prompt.isBookmarked && 'fill-primary text-primary')} />
-          </Button>
-        </div>
-        <CardDescription>{prompt.description}</CardDescription>
-        <div className="flex flex-wrap gap-2 pt-2">
-          {prompt.tags.map(tag => (
-            <Badge key={tag} variant="secondary">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="prose prose-sm dark:prose-invert rounded-lg border bg-secondary/30 p-4 text-sm text-foreground/80">
-          <p className='leading-relaxed'>{renderFormattedText(filledTemplate)}</p>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5">
-                <Star className="h-4 w-4" />
-                Rate
+    <Link href={`/prompt/${prompt.id}`} className="flex h-full">
+        <Card className="flex w-full flex-col transition-colors hover:border-primary/50">
+        <CardHeader>
+            <div className="flex items-start justify-between">
+            <CardTitle className="text-lg">{prompt.title}</CardTitle>
+            <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0"
+                onClick={handleBookmark}
+            >
+                <Bookmark className={cn('h-5 w-5', prompt.isBookmarked && 'fill-primary text-primary')} />
             </Button>
-        </div>
-        <Button size="sm" onClick={handleCopyToClipboard}>
-          <Clipboard className="mr-2 h-4 w-4" />
-          Copy
-        </Button>
-      </CardFooter>
-    </Card>
+            </div>
+            <CardDescription>{prompt.description}</CardDescription>
+            <div className="flex flex-wrap gap-2 pt-2">
+            {prompt.tags.map(tag => (
+                <Badge key={tag} variant="secondary">
+                {tag}
+                </Badge>
+            ))}
+            </div>
+        </CardHeader>
+        <CardContent className="flex-grow">
+            <div className="prose prose-sm dark:prose-invert rounded-lg border bg-secondary/30 p-4 text-sm text-foreground/80">
+            <p className='leading-relaxed'>{renderFormattedText(filledTemplate)}</p>
+            </div>
+        </CardContent>
+        <CardFooter className="flex justify-end">
+            <Button size="sm" onClick={handleCopyToClipboard}>
+            <Clipboard className="mr-2 h-4 w-4" />
+            Copy
+            </Button>
+        </CardFooter>
+        </Card>
+    </Link>
   );
 }
