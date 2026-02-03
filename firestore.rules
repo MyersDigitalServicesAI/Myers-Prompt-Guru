@@ -1,0 +1,111 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All user data, including profiles and prompts, is private and accessible only by the authenticated user who owns it. This ensures user data privacy and isolation.
+ *
+ * Data Structure: Data is hierarchically organized under a top-level `users` collection. Each user's data is stored in their own document tree, for example: `/users/{userId}` for their profile and `/users/{userId}/prompts/{promptId}` for their prompts. This path-based ownership is the cornerstone of the security model.
+ *
+ * Key Security Decisions:
+ * - User Enumeration is Forbidden: Listing the top-level `/users` collection is explicitly denied to prevent malicious actors from discovering all users of the application.
+ * - Strict Path-Based Ownership: All access decisions for subcollections (like `/prompts`) are based on the `{userId}` wildcard in the path, ensuring a user can only ever access data within their own tree.
+ * - Default Deny: Any path not explicitly matched is inaccessible. All operations (`get`, `list`, `create`, `update`, `delete`) are denied by default unless an `allow` rule specifically grants access.
+ *
+ * Denormalization for Authorization: This ruleset leverages a path-based security model which is highly performant. The user's ID (`userId`) in the document path (`/users/{userId}/...`) is the source of truth for ownership, eliminating the need for slow and costly `get()` calls to other documents for authorization checks.
+ *
+ * Structural Segregation: User-specific, private data (like `prompts`) is nested within that user's document path. This is a secure pattern that prevents data leakage and simplifies rules for list operations, as a user is only ever allowed to list documents within their own subcollections.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // Helper Functions
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing data ownership.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks for ownership on an existing document. Used for update and delete
+     * operations to ensure the document exists before the operation is attempted.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates that the incoming 'User' document contains an 'id' field
+     * that matches the user's auth UID, enforcing relational integrity on creation.
+     */
+    function isCreatingValidUser(userId) {
+      return request.resource.data.id == userId;
+    }
+
+    /**
+     * Validates that the 'id' field of a 'User' document is immutable.
+     * This prevents an ownership link from being changed after creation.
+     */
+    function isUpdatingValidUser() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Validates that the incoming 'Prompt' document contains a 'userId' field
+     * that matches the owner's auth UID from the path.
+     */
+    function isCreatingValidPrompt(userId) {
+      return request.resource.data.userId == userId;
+    }
+
+    /**
+     * Validates that the 'userId' field of a 'Prompt' document is immutable.
+     */
+    function isUpdatingValidPrompt() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    // ------------------------------------------------------------------------
+    // Collection Rules
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Manages user profile documents.
+     * @path /users/{userId}
+     * @allow A user (auth.uid='user123') can (get) their own profile at /users/user123.
+     * @deny A user (auth.uid='userABC') cannot (get) another user's profile at /users/user123.
+     * @principle Restricts access to a user's own data tree and prevents user enumeration.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isCreatingValidUser(userId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidUser();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Manages user-created prompts, nested under the user's profile.
+     * @path /users/{userId}/prompts/{promptId}
+     * @allow A user (auth.uid='user123') can (create) a new prompt at /users/user123/prompts/promptABC.
+     * @deny A user (auth.uid='userABC') cannot (list) prompts from /users/user123/prompts.
+     * @principle Enforces document ownership for all operations via path-based security.
+     */
+    match /users/{userId}/prompts/{promptId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && isCreatingValidPrompt(userId);
+      allow update: if isExistingOwner(userId) && isUpdatingValidPrompt();
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}
