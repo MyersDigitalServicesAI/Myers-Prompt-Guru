@@ -7,10 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Copy, Loader2, Sparkles, Upload } from "lucide-react";
+import { Loader2, Sparkles, Upload, Save } from "lucide-react";
 import Image from "next/image";
-import { Textarea } from "../ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { type ExtractPromptsOutput } from "@/ai/flows/ai-bulk-import-extract-prompts";
+import { ScrollArea } from "../ui/scroll-area";
+import { useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection } from "firebase/firestore";
+import type { User } from "firebase/auth";
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
@@ -26,16 +30,65 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
   );
 }
 
-export function ScreenshotImportTab() {
+function ExtractedScreenshotPrompts({ prompts, onSave }: { prompts: ExtractPromptsOutput, onSave: () => void }) {
+    const [isSaving, setIsSaving] = React.useState(false);
+  
+    const handleSave = () => {
+      setIsSaving(true);
+      onSave();
+    }
+  
+    return (
+      <div className="space-y-4">
+        <Alert>
+          <AlertTitle>Extraction Successful!</AlertTitle>
+          <AlertDescription>
+            {`We found ${prompts.length} prompts. Review and save them to your library.`}
+          </AlertDescription>
+        </Alert>
+        <ScrollArea className="h-64 rounded-md border p-4">
+          <pre className="text-xs">{JSON.stringify(prompts, null, 2)}</pre>
+        </ScrollArea>
+         <Button onClick={handleSave} disabled={isSaving} className="w-full">
+            {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            Save to Library
+          </Button>
+      </div>
+    );
+  }
+
+export function ScreenshotImportTab({ user }: { user: User | null }) {
   const [imageData, setImageData] = React.useState<string | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
   const { toast } = useToast();
+  const firestore = useFirestore();
+
+  const handleSavePrompts = (promptsToSave: ExtractPromptsOutput) => {
+    if (!user) {
+        toast({ variant: "destructive", title: "You must be logged in to save prompts." });
+        return;
+    }
+
+    const promptsCollection = collection(firestore, 'users', user.uid, 'prompts');
+
+    promptsToSave.forEach(prompt => {
+        addDocumentNonBlocking(promptsCollection, { ...prompt, userId: user.uid, isBookmarked: false });
+    });
+
+    toast({
+        title: "Prompts saved!",
+        description: `${promptsToSave.length} new prompts have been added to your library from the screenshot.`,
+    });
+    
+    resetForm();
+    window.location.reload();
+};
 
   const [formState, formAction] = React.useActionState(handleScreenshotImport, {
     message: "",
-    refinedPrompt: null,
+    prompts: null,
     error: false,
   });
 
@@ -52,18 +105,7 @@ export function ScreenshotImportTab() {
   };
 
   const handleSubmit = (formData: FormData) => {
-    // The hidden input will carry the image data.
-    // We pass the formData to the action.
     formAction(formData);
-  };
-  
-  const handleCopyToClipboard = () => {
-    if (formState.refinedPrompt) {
-        navigator.clipboard.writeText(formState.refinedPrompt);
-        toast({
-            title: 'Copied to clipboard!',
-        });
-    }
   };
 
   const resetForm = () => {
@@ -75,32 +117,12 @@ export function ScreenshotImportTab() {
     if (formRef.current) {
         formRef.current.reset();
     }
-    // Create a new empty FormData and pass to the action to reset the state
-    const formData = new FormData();
-    formAction(formData);
   }
 
-  if (formState.refinedPrompt && !formState.error) {
+  if (formState.prompts && !formState.error) {
     return (
         <div className="space-y-4 py-4">
-            <Alert>
-                <AlertTitle>Success!</AlertTitle>
-                <AlertDescription>
-                    Here is the refined prompt from your screenshot.
-                </AlertDescription>
-            </Alert>
-            <div className="relative">
-                <Textarea
-                    readOnly
-                    value={formState.refinedPrompt}
-                    rows={8}
-                    className="text-sm pr-10"
-                />
-                 <Button variant="ghost" size="icon" className="absolute top-2 right-2 h-7 w-7" onClick={handleCopyToClipboard}>
-                    <Copy className="h-4 w-4" />
-                </Button>
-            </div>
-            <Button onClick={resetForm} variant="outline" className="w-full">Start Over</Button>
+            <ExtractedScreenshotPrompts prompts={formState.prompts} onSave={() => handleSavePrompts(formState.prompts!)} />
         </div>
     );
   }

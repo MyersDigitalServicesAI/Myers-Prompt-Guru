@@ -11,10 +11,12 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bookmark, Clipboard, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { type Prompt } from '@/lib/prompts';
+import { Bookmark, Clipboard, Star } from 'lucide-react';
+import { type Prompt } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore, updateDocumentNonBlocking } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 interface PromptCardProps {
   prompt: Prompt;
@@ -22,8 +24,8 @@ interface PromptCardProps {
 }
 
 export function PromptCard({ prompt, variables }: PromptCardProps) {
-  const [isBookmarked, setIsBookmarked] = React.useState(prompt.isBookmarked);
   const { toast } = useToast();
+  const firestore = useFirestore();
 
   const filledTemplate = React.useMemo(() => {
     return prompt.template.replace(/\[(.*?)\]/g, (match, varName) => {
@@ -43,9 +45,15 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
   };
 
   const handleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+    if (!prompt.userId || !prompt.id) return;
+
+    const promptRef = doc(firestore, 'users', prompt.userId, 'prompts', prompt.id);
+    const newBookmarkState = !prompt.isBookmarked;
+
+    updateDocumentNonBlocking(promptRef, { isBookmarked: newBookmarkState });
+    
     toast({
-      title: isBookmarked ? 'Bookmark removed' : 'Prompt bookmarked!',
+      title: newBookmarkState ? 'Prompt bookmarked!' : 'Bookmark removed',
     });
   };
 
@@ -71,7 +79,7 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
             className="h-8 w-8 shrink-0"
             onClick={handleBookmark}
           >
-            <Bookmark className={cn('h-5 w-5', isBookmarked && 'fill-primary text-primary')} />
+            <Bookmark className={cn('h-5 w-5', prompt.isBookmarked && 'fill-primary text-primary')} />
           </Button>
         </div>
         <CardDescription>{prompt.description}</CardDescription>

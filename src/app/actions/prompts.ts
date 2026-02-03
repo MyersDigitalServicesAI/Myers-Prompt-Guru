@@ -1,7 +1,7 @@
 "use server";
 
 import { extractPrompts, type ExtractPromptsOutput } from "@/ai/flows/ai-bulk-import-extract-prompts";
-import { extractAndRefineFromImage, type ExtractAndRefineFromImageOutput } from "@/ai/flows/extract-and-refine-from-image";
+import { extractAndRefineFromImage } from "@/ai/flows/extract-and-refine-from-image";
 import { z } from "zod";
 
 const BulkImportSchema = z.object({
@@ -41,9 +41,6 @@ export async function handleBulkImport(
       };
     }
 
-    // Here you would typically save the prompts to Firestore.
-    // For this example, we'll just return them to the client.
-
     return {
       message: `Successfully extracted ${prompts.length} prompts.`,
       prompts,
@@ -63,11 +60,11 @@ const ScreenshotImportSchema = z.object({
     image: z.string().min(1, "Image data is required."),
   });
   
-  type ScreenshotImportState = {
-    message: string;
-    refinedPrompt: ExtractAndRefineFromImageOutput | null;
-    error?: boolean;
-  };
+type ScreenshotImportState = {
+  message: string;
+  prompts: ExtractPromptsOutput | null;
+  error?: boolean;
+};
   
   export async function handleScreenshotImport(
     prevState: ScreenshotImportState,
@@ -80,25 +77,37 @@ const ScreenshotImportSchema = z.object({
     if (!validatedFields.success) {
       return {
         message: "Validation failed: Image is required.",
-        refinedPrompt: null,
+        prompts: null,
         error: true,
       };
     }
   
     try {
-      const refinedPrompt = await extractAndRefineFromImage({ imageDataUri: validatedFields.data.image });
+      // Step 1: Extract and refine text from the image.
+      const refinedText = await extractAndRefineFromImage({ imageDataUri: validatedFields.data.image });
   
-      if (!refinedPrompt) {
+      if (!refinedText) {
         return {
-          message: "Could not extract or refine a prompt from the image. Please try a different image.",
-          refinedPrompt: null,
+          message: "Could not extract or refine text from the image. Please try a different image.",
+          prompts: null,
+          error: true,
+        };
+      }
+
+      // Step 2: Extract structured prompts from the refined text.
+      const prompts = await extractPrompts({ input: refinedText });
+
+      if (!prompts || prompts.length === 0) {
+        return {
+          message: "Could not structure the extracted text into prompts. Please try a different image.",
+          prompts: null,
           error: true,
         };
       }
       
       return {
-        message: "Successfully extracted and refined prompt.",
-        refinedPrompt,
+        message: "Successfully extracted and structured prompts.",
+        prompts,
         error: false,
       };
   
@@ -106,7 +115,7 @@ const ScreenshotImportSchema = z.object({
       console.error(e);
       return {
         message: "An unexpected error occurred during the process.",
-        refinedPrompt: null,
+        prompts: null,
         error: true,
       };
     }

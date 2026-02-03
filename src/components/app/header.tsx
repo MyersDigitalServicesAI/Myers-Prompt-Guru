@@ -32,7 +32,6 @@ export function AppHeader() {
   const router = useRouter();
   
   const userAvatar = PlaceHolderImages.find(img => img.id === 'user-avatar');
-  const isPro = true; // This will be replaced with actual user data
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -57,7 +56,7 @@ export function AppHeader() {
         </form>
       </div>
       <div className="flex items-center gap-2">
-        <AddPromptDialog>
+        <AddPromptDialog user={user}>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Prompt

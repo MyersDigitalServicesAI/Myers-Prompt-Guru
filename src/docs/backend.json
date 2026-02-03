@@ -1,0 +1,133 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the PromptMaster application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "isPro": {
+          "type": "boolean",
+          "description": "Indicates whether the user has a Pro subscription."
+        },
+        "googleId": {
+          "type": "string",
+          "description": "User's Google ID (if signed up with Google)."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "isPro"
+      ]
+    },
+    "Prompt": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Prompt",
+      "type": "object",
+      "description": "Represents a prompt stored in the PromptMaster application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the prompt entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the prompt."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the prompt."
+        },
+        "template": {
+          "type": "string",
+          "description": "The prompt template text with variables."
+        },
+        "category": {
+          "type": "string",
+          "description": "Category of the prompt."
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags associated with the prompt.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isBookmarked": {
+            "type": "boolean",
+            "description": "Indicates if the user has bookmarked this prompt."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Prompt)"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "template",
+        "category",
+        "userId"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous",
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership ensures only the user can access their profile data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/prompts/{promptId}",
+        "definition": {
+          "entityName": "Prompt",
+          "schema": {
+            "$ref": "#/backend/entities/Prompt"
+          },
+          "description": "Stores prompts created by a user. Path-based ownership ensures only the user can access their own prompts.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "promptId",
+              "description": "The unique identifier for the prompt."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence and facilitate secure data access based on the application's requirements. User data is stored in `/users/{userId}`. Prompts are stored in a subcollection `/users/{userId}/prompts/{promptId}`. This structure utilizes path-based ownership for private user data and prompts, ensuring that each user can only access their own data.  Authorization Independence is achieved as no `get()` calls are required to check the user's ownership of prompts. The path itself confirms the relationship between user and prompt.\\n\\nThis design avoids mixing data with different access requirements in the same collection, improving security rule simplicity. The use of path-based ownership enables secure and efficient `list` operations, fulfilling the QAPs."
+  }
+}

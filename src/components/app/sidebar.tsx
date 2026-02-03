@@ -64,7 +64,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <div className="p-2">
-            <AddPromptDialog>
+            <AddPromptDialog user={user}>
                 <Button variant="outline" className="w-full">
                     <Plus className="mr-2 h-4 w-4" />
                     Add Prompt
