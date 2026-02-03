@@ -83,7 +83,7 @@ function BulkImportTab({ user }: { user: User | null }) {
         const promptsCollection = collection(firestore, 'users', user.uid, 'prompts');
 
         promptsToSave.forEach(prompt => {
-            addDocumentNonBlocking(promptsCollection, { ...prompt, userId: user.uid });
+            addDocumentNonBlocking(promptsCollection, { ...prompt, userId: user.uid, isBookmarked: false });
         });
 
         toast({
