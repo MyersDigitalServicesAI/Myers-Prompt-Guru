@@ -118,6 +118,26 @@
         "category",
         "savedAt"
       ]
+    },
+    "PromptEvent": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Prompt Event",
+      "type": "object",
+      "description": "Represents an analytics event related to a prompt interaction.",
+      "properties": {
+        "id": { "type": "string" },
+        "promptId": { "type": "string" },
+        "userId": { "type": "string" },
+        "type": { 
+            "type": "string",
+            "enum": ["copied", "bookmarked", "unbookmarked"]
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time"
+        }
+    },
+    "required": ["promptId", "userId", "type", "timestamp"]
     }
   },
   "auth": {
@@ -183,6 +203,19 @@
             {
               "name": "versionId"
             }
+          ]
+        }
+      },
+      {
+        "path": "/promptEvents/{eventId}",
+        "definition": {
+          "entityName": "PromptEvent",
+          "schema": {
+            "$ref": "#/backend/entities/PromptEvent"
+          },
+          "description": "Stores analytics events for prompt interactions. Write-only for clients.",
+          "params": [
+            { "name": "eventId" }
           ]
         }
       }

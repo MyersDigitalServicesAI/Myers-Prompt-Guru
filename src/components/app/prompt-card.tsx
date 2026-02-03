@@ -15,8 +15,8 @@ import { Bookmark, Clipboard } from 'lucide-react';
 import { type Prompt } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { useFirestore, updateDocumentNonBlocking } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useFirestore, updateDocumentNonBlocking, addDocumentNonBlocking, useUser } from '@/firebase';
+import { doc, collection, serverTimestamp } from 'firebase/firestore';
 import Link from 'next/link';
 
 interface PromptCardProps {
@@ -27,6 +27,7 @@ interface PromptCardProps {
 export function PromptCard({ prompt, variables }: PromptCardProps) {
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const filledTemplate = React.useMemo(() => {
     return prompt.template.replace(/\[(.*?)\]/g, (match, varName) => {
@@ -45,12 +46,23 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
       title: 'Copied to clipboard!',
       description: 'The filled prompt has been copied.',
     });
+    
+    // Add tracking event
+    if (user && prompt.id) {
+        const eventsCollection = collection(firestore, 'promptEvents');
+        addDocumentNonBlocking(eventsCollection, {
+            userId: user.uid,
+            promptId: prompt.id,
+            type: 'copied',
+            timestamp: serverTimestamp(),
+        });
+    }
   };
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    if (!prompt.userId || !prompt.id) return;
+    if (!prompt.userId || !prompt.id || !user) return;
 
     const promptRef = doc(firestore, 'users', prompt.userId, 'prompts', prompt.id);
     const newBookmarkState = !prompt.isBookmarked;
@@ -59,6 +71,15 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
     
     toast({
       title: newBookmarkState ? 'Prompt bookmarked!' : 'Bookmark removed',
+    });
+
+    // Add tracking event
+    const eventsCollection = collection(firestore, 'promptEvents');
+    addDocumentNonBlocking(eventsCollection, {
+        userId: user.uid,
+        promptId: prompt.id,
+        type: newBookmarkState ? 'bookmarked' : 'unbookmarked',
+        timestamp: serverTimestamp(),
     });
   };
 

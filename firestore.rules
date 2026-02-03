@@ -122,5 +122,20 @@ service cloud.firestore {
         allow delete: if false;
       }
     }
+    
+    /**
+     * @description Manages analytics events for prompts.
+     * @path /promptEvents/{eventId}
+     * @allow A signed-in user can create an event.
+     * @deny Reading, updating, or deleting events is forbidden to protect privacy and data integrity.
+     * @principle Write-only log for analytics.
+     */
+    match /promptEvents/{eventId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if false;
+      allow delete: if false;
+    }
   }
 }

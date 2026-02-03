@@ -27,3 +27,11 @@ export type PromptVersion = {
     tags: string[];
     savedAt: Timestamp;
 };
+
+export type PromptEvent = {
+    id: string;
+    promptId: string;
+    userId: string;
+    type: 'copied' | 'bookmarked' | 'unbookmarked';
+    timestamp: Timestamp;
+}

@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  BarChartHorizontal,
   Book,
   BotMessageSquare,
   ChevronDown,
@@ -88,6 +89,12 @@ export function AppSidebar() {
             <SidebarMenuButton href="/history" isActive={pathname === '/history'} tooltip="History">
               <History />
               <span>History</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton href="/analytics" isActive={pathname === '/analytics'} tooltip="Analytics">
+              <BarChartHorizontal />
+              <span>Analytics</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
