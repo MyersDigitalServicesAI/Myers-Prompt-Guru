@@ -1,3 +1,5 @@
+import type { Timestamp } from 'firebase/firestore';
+
 export type UserProfile = {
     id: string;
     email: string;
@@ -6,7 +8,7 @@ export type UserProfile = {
 };
 
 export type Prompt = {
-    id: string;
+    id:string;
     title: string;
     description: string;
     template: string;
@@ -14,4 +16,14 @@ export type Prompt = {
     tags: string[];
     userId: string;
     isBookmarked: boolean;
+};
+
+export type PromptVersion = {
+    id: string;
+    title: string;
+    description: string;
+    template: string;
+    category: string;
+    tags: string[];
+    savedAt: Timestamp;
 };

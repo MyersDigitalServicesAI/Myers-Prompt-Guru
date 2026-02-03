@@ -80,6 +80,44 @@
         "category",
         "userId"
       ]
+    },
+    "PromptVersion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Prompt Version",
+      "type": "object",
+      "description": "Represents a historical version of a prompt.",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "template": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "savedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when this version was created."
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "template",
+        "category",
+        "savedAt"
+      ]
     }
   },
   "auth": {
@@ -123,6 +161,27 @@
             {
               "name": "promptId",
               "description": "The unique identifier for the prompt."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/prompts/{promptId}/versions/{versionId}",
+        "definition": {
+          "entityName": "PromptVersion",
+          "schema": {
+            "$ref": "#/backend/entities/PromptVersion"
+          },
+          "description": "Stores the historical versions of a prompt. Path-based ownership ensures only the prompt owner can access its history.",
+          "params": [
+            {
+              "name": "userId"
+            },
+            {
+              "name": "promptId"
+            },
+            {
+              "name": "versionId"
             }
           ]
         }

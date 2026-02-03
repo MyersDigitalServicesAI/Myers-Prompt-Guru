@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { doc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { collection, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { ArrowLeft, Edit, Save, X } from 'lucide-react';
 import Link from 'next/link';
 
-import { useDoc, useFirestore, useUser, updateDocumentNonBlocking, useMemoFirebase } from '@/firebase';
-import { type Prompt } from '@/lib/types';
+import { useDoc, useFirestore, useUser, updateDocumentNonBlocking, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
+import { type Prompt, type PromptVersion } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { PromptVersionHistory } from '@/components/app/prompt-version-history';
 
 function PromptPageLoading() {
     return (
@@ -78,21 +79,55 @@ export default function PromptDetailPage() {
     };
     
     const handleSave = () => {
-        if (!promptRef) return;
-        
+        if (!promptRef || !prompt) return;
+
+        // Create a version of the current state before saving
+        const versionsCollectionRef = collection(firestore, 'users', prompt.userId, 'prompts', prompt.id, 'versions');
+        const versionData = {
+            title: prompt.title,
+            description: prompt.description,
+            template: prompt.template,
+            category: prompt.category,
+            tags: prompt.tags,
+            savedAt: serverTimestamp(),
+        };
+        addDocumentNonBlocking(versionsCollectionRef, versionData);
+
+        // Save the new data to the main prompt document
         const dataToSave = {
             ...formData,
-            // updatedAt: serverTimestamp() // Will add this with versioning
+            // updatedAt: serverTimestamp()
         };
-
         updateDocumentNonBlocking(promptRef, dataToSave);
 
         toast({
             title: "Prompt updated!",
-            description: "Your changes have been saved.",
+            description: "A new version has been saved to its history.",
         });
 
         setIsEditing(false);
+    };
+
+    const handleRestore = (versionData: PromptVersion) => {
+        if (!promptRef || !prompt) return;
+
+        // 1. First, save the *current* state as a new version before we overwrite it
+        const versionsCollectionRef = collection(firestore, 'users', prompt.userId, 'prompts', prompt.id, 'versions');
+        const currentVersionData = {
+            title: prompt.title,
+            description: prompt.description,
+            template: prompt.template,
+            category: prompt.category,
+            tags: prompt.tags,
+            savedAt: serverTimestamp(),
+        };
+        addDocumentNonBlocking(versionsCollectionRef, currentVersionData);
+        
+        // 2. Now, update the main document with the restored version's data
+        const { id, savedAt, ...restOfVersionData } = versionData; // Omit id and savedAt from the main doc
+        updateDocumentNonBlocking(promptRef, restOfVersionData);
+
+        // The useDoc hook will automatically update the UI, including the form fields via useEffect
     };
 
 
@@ -175,12 +210,9 @@ export default function PromptDetailPage() {
                 </CardFooter>
             </Card>
 
-            {/* Placeholder for Version History */}
              <div className="mt-8">
                 <h2 className="text-2xl font-bold tracking-tight mb-4">Version History</h2>
-                <div className="text-center rounded-lg border-2 border-dashed border-muted-foreground/20 py-12">
-                    <p className="text-sm text-muted-foreground">Version history will be available here soon.</p>
-                </div>
+                <PromptVersionHistory prompt={prompt} onRestore={handleRestore} />
             </div>
         </div>
     );
