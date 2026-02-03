@@ -4,31 +4,14 @@ import * as React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
-import { useUser, useDoc, useMemoFirebase } from '@/firebase';
-import { doc }from 'firebase/firestore';
+import { useUser, useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
+import { doc, collection, query } from 'firebase/firestore';
 import { GoProDialog } from '@/components/app/go-pro-dialog';
 import { Button } from '@/components/ui/button';
 import { Sparkles, BarChartHorizontal } from 'lucide-react';
-import { type UserProfile } from '@/lib/types';
-import { useFirestore } from '@/firebase';
+import { type UserProfile, type PromptEvent, type Prompt } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-
-// Placeholder data - we will replace this with real data soon
-const copiedData = [
-    { prompt: "Story Starter", copies: 102, fill: "var(--color-copies)" },
-    { prompt: "Marketing Email", copies: 78, fill: "var(--color-copies)" },
-    { prompt: "Bug Report", copies: 54, fill: "var(--color-copies)" },
-    { prompt: "Social Media Post", copies: 45, fill: "var(--color-copies)" },
-    { prompt: "Recipe Generator", copies: 21, fill: "var(--color-copies)" },
-]
-const bookmarkedData = [
-    { prompt: "Story Starter", bookmarks: 85, fill: "var(--color-bookmarks)" },
-    { prompt: "Social Media Post", bookmarks: 62, fill: "var(--color-bookmarks)" },
-    { prompt: "Marketing Email", bookmarks: 41, fill: "var(--color-bookmarks)" },
-    { prompt: "Travel Itinerary", bookmarks: 33, fill: "var(--color-bookmarks)" },
-    { prompt: "Code Explanation", bookmarks: 18, fill: "var(--color-bookmarks)" },
-]
 
 const chartConfig = {
     copies: {
@@ -90,7 +73,59 @@ export default function AnalyticsPage() {
 
     const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userRef);
 
-    const isLoading = isAuthLoading || isProfileLoading;
+    const promptsQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        return query(collection(firestore, 'users', user.uid, 'prompts'));
+    }, [user, firestore]);
+    const { data: prompts, isLoading: arePromptsLoading } = useCollection<Prompt>(promptsQuery);
+
+    const eventsQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        return query(collection(firestore, 'users', user.uid, 'promptEvents'));
+    }, [user, firestore]);
+    const { data: events, isLoading: areEventsLoading } = useCollection<PromptEvent>(eventsQuery);
+
+    const { copiedData, bookmarkedData } = React.useMemo(() => {
+        if (!events || !prompts) {
+            return { copiedData: [], bookmarkedData: [] };
+        }
+
+        const promptTitles = prompts.reduce((acc, p) => {
+            acc[p.id] = p.title;
+            return acc;
+        }, {} as Record<string, string>);
+
+        const copyCounts: Record<string, number> = {};
+        const bookmarkCounts: Record<string, number> = {};
+
+        for (const event of events) {
+            if (event.type === 'copied') {
+                copyCounts[event.promptId] = (copyCounts[event.promptId] || 0) + 1;
+            } else if (event.type === 'bookmarked') {
+                bookmarkCounts[event.promptId] = (bookmarkCounts[event.promptId] || 0) + 1;
+            }
+        }
+
+        const processData = (counts: Record<string, number>, key: 'copies' | 'bookmarks') => {
+            return Object.entries(counts)
+                .map(([promptId, count]) => ({
+                    prompt: promptTitles[promptId] || 'Deleted Prompt',
+                    [key]: count,
+                }))
+                .filter(item => item.prompt !== 'Deleted Prompt')
+                .sort((a, b) => b[key] - a[key])
+                .slice(0, 5)
+                .map(item => ({...item, fill: key === 'copies' ? 'var(--color-copies)' : 'var(--color-bookmarks)'}));
+        };
+
+        const finalCopiedData = processData(copyCounts, 'copies');
+        const finalBookmarkedData = processData(bookmarkCounts, 'bookmarks');
+
+        return { copiedData: finalCopiedData, bookmarkedData: finalBookmarkedData };
+
+    }, [events, prompts]);
+
+    const isLoading = isAuthLoading || isProfileLoading || arePromptsLoading || areEventsLoading;
 
     if (isLoading) {
         return <AnalyticsLoading />;

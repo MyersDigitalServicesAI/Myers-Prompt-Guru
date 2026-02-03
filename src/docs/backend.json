@@ -207,15 +207,20 @@
         }
       },
       {
-        "path": "/promptEvents/{eventId}",
+        "path": "/users/{userId}/promptEvents/{eventId}",
         "definition": {
           "entityName": "PromptEvent",
           "schema": {
             "$ref": "#/backend/entities/PromptEvent"
           },
-          "description": "Stores analytics events for prompt interactions. Write-only for clients.",
+          "description": "Stores analytics events for a specific user. Path-based ownership allows a user to read their own events.",
           "params": [
-            { "name": "eventId" }
+            {
+              "name": "userId"
+            },
+            {
+              "name": "eventId"
+            }
           ]
         }
       }

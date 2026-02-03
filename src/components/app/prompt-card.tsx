@@ -49,7 +49,7 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
     
     // Add tracking event
     if (user && prompt.id) {
-        const eventsCollection = collection(firestore, 'promptEvents');
+        const eventsCollection = collection(firestore, 'users', user.uid, 'promptEvents');
         addDocumentNonBlocking(eventsCollection, {
             userId: user.uid,
             promptId: prompt.id,
@@ -74,7 +74,7 @@ export function PromptCard({ prompt, variables }: PromptCardProps) {
     });
 
     // Add tracking event
-    const eventsCollection = collection(firestore, 'promptEvents');
+    const eventsCollection = collection(firestore, 'users', user.uid, 'promptEvents');
     addDocumentNonBlocking(eventsCollection, {
         userId: user.uid,
         promptId: prompt.id,

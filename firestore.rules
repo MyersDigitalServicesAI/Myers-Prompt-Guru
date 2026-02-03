@@ -124,16 +124,16 @@ service cloud.firestore {
     }
     
     /**
-     * @description Manages analytics events for prompts.
-     * @path /promptEvents/{eventId}
-     * @allow A signed-in user can create an event.
-     * @deny Reading, updating, or deleting events is forbidden to protect privacy and data integrity.
-     * @principle Write-only log for analytics.
+     * @description Manages analytics events for a user's prompts.
+     * @path /users/{userId}/promptEvents/{eventId}
+     * @allow A user can create and read their own events.
+     * @deny Reading or writing events for another user is forbidden.
+     * @principle Write-only log for analytics, readable only by the owner.
      */
-    match /promptEvents/{eventId} {
-      allow get: if false;
-      allow list: if false;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    match /users/{userId}/promptEvents/{eventId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
       allow update: if false;
       allow delete: if false;
     }
