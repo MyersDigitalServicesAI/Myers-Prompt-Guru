@@ -4,7 +4,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
-      "description": "Represents a user of the PromptMaster application.",
+      "description": "Represents a user of the Myers Prompt Guru application.",
       "properties": {
         "id": {
           "type": "string",
@@ -34,7 +34,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Prompt",
       "type": "object",
-      "description": "Represents a prompt stored in the PromptMaster application.",
+      "description": "Represents a prompt stored in the Myers Prompt Guru application.",
       "properties": {
         "id": {
           "type": "string",
