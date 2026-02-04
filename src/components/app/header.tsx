@@ -56,7 +56,7 @@ export function AppHeader() {
         </form>
       </div>
       <div className="flex items-center gap-2">
-        <AddPromptDialog user={user}>
+        <AddPromptDialog>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add Prompt
