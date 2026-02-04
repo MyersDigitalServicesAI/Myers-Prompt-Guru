@@ -157,13 +157,14 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           const userDocSnap = await getDoc(userDocRef);
           
           let userProfile: UserProfile;
+          const isProUserByEmail = (firebaseUser.email || '').toLowerCase() === 'myersdigitalservicesai@gmail.com';
 
           if (!userDocSnap.exists()) {
             // New user! Create their profile and seed their prompts.
             userProfile = {
               id: firebaseUser.uid,
               email: firebaseUser.email || '',
-              isPro: false, // New users start as non-pro
+              isPro: isProUserByEmail, // Grant Pro if email matches
             };
             await setDoc(userDocRef, userProfile);
 
@@ -176,6 +177,11 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
             }
           } else {
             userProfile = userDocSnap.data() as UserProfile;
+            // For existing users, if they are on the whitelist but not Pro, update them.
+            if (isProUserByEmail && !userProfile.isPro) {
+                userProfile.isPro = true;
+                await setDoc(userDocRef, { isPro: true }, { merge: true });
+            }
           }
           setUserAuthState({ user: firebaseUser, userProfile, isUserLoading: false, userError: null });
 
