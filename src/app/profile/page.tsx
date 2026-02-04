@@ -52,7 +52,7 @@ export default function ProfilePage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Subscription</CardTitle>
-                    <CardDescription>Manage your PromptMaster subscription.</CardDescription>
+                    <CardDescription>Manage your Myers Prompt Guru subscription.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 rounded-lg border p-6">
                     <div>

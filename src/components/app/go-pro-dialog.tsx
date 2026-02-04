@@ -32,7 +32,7 @@ export function GoProDialog({ children }: { children: React.ReactNode }) {
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
                 <Sparkles className="h-6 w-6 text-primary" />
             </div>
-          <DialogTitle className="text-center">Upgrade to PromptMaster Pro</DialogTitle>
+          <DialogTitle className="text-center">Upgrade to Myers Prompt Guru Pro</DialogTitle>
           <DialogDescription className="text-center">
             Unlock the full potential of prompt engineering with our Pro features.
           </DialogDescription>

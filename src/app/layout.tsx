@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export const metadata: Metadata = {
-  title: 'PromptMaster - AI Prompt Library & Manager',
+  title: 'Myers Prompt Guru - AI Prompt Library & Manager',
   description: 'The ultimate tool for creating, managing, and discovering high-quality AI prompts.',
 };
 

@@ -4,7 +4,7 @@ test('has title and redirects to login', async ({ page }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/PromptMaster/);
+  await expect(page).toHaveTitle(/Myers Prompt Guru/);
 
   // Expect the page to be redirected to /login for unauthenticated users
   await expect(page).toHaveURL('/login');
