@@ -10,7 +10,7 @@ test('has title and redirects to login', async ({ page }) => {
   await expect(page).toHaveURL('/login');
   
   // Expect the login card to be visible with the correct title
-  await expect(page.getByText('Welcome Back')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Welcome Back' })).toBeVisible();
   await expect(page.getByText('Enter your credentials to access your prompt library.')).toBeVisible();
 });
 
@@ -36,8 +36,7 @@ test('allows a new user to sign up and redirects to the dashboard', async ({ pag
   await page.getByRole('button', { name: 'Sign Up', exact: true }).click();
 
   // After sign-up, the user should be redirected to the dashboard
-  // We'll give it a bit more time to handle the backend user creation and redirection
-  await expect(page).toHaveURL('/', { timeout: 10000 });
+  await expect(page).toHaveURL('/');
 
   // Verify that the dashboard is loaded by checking for a key element
   await expect(page.getByRole('heading', { name: 'Prompt Library' })).toBeVisible();
