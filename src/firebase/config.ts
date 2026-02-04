@@ -1,9 +1,9 @@
 export const firebaseConfig = {
-  apiKey: "***REMOVED***",
-  authDomain: "ai-underground-ecosystem.firebaseapp.com",
-  projectId: "ai-underground-ecosystem",
-  storageBucket: "ai-underground-ecosystem.firebasestorage.app",
-  messagingSenderId: "837457168093",
-  appId: "1:837457168093:web:22af4de66651471d62fd34",
-  measurementId: "G-LW6QDT6CJT"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID!
 };
