@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppSidebar } from '@/components/app/sidebar';
 import { AppHeader } from '@/components/app/header';
@@ -78,7 +79,7 @@ function EmptyState({ onReset }: { onReset: () => void }) {
     )
 }
 
-export default function DashboardPage() {
+function DashboardPageComponent() {
   const { user, userProfile, isUserLoading: isAuthLoading } = useUser();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -137,7 +138,7 @@ export default function DashboardPage() {
   React.useEffect(() => {
     const initialVars: Record<string, string> = {};
     allVariables.forEach(v => {
-      initialVars[v] = values[v] || '';
+      initialVars[v] = variables[v] || '';
     });
     setVariables(initialVars);
   }, [allVariables]);
@@ -217,4 +218,12 @@ export default function DashboardPage() {
       </SidebarInset>
     </>
   );
+}
+
+export default function DashboardPage() {
+    return (
+        <Suspense fallback={<DashboardLoading />}>
+            <DashboardPageComponent />
+        </Suspense>
+    )
 }
