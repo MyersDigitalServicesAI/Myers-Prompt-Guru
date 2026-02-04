@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
 import { useAuth, useUser } from "@/firebase";
-import { AuthError, onAuthStateChanged } from "firebase/auth";
+import { AuthError } from "firebase/auth";
 import {
   initiateEmailSignIn,
   initiateEmailSignUp,
@@ -50,55 +50,55 @@ export default function LoginPage() {
     }
   }, [user, isUserLoading, router]);
 
-  React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(
-      auth,
-      (user) => {
-        // user object is handled by the useUser hook.
-        // this listener is primarily for handling auth errors on this page.
-      },
-      (error: AuthError) => {
-        switch (error.code) {
-          case "auth/invalid-email":
-            setError("Invalid email address format.");
-            break;
-          case "auth/user-not-found":
-          case "auth/wrong-password":
-          case "auth/invalid-credential":
-            setError("Invalid email or password.");
-            break;
-          case "auth/email-already-in-use":
-            setError("An account already exists with this email address.");
-            break;
-          case "auth/weak-password":
-            setError("Password should be at least 6 characters long.");
-            break;
-          case "auth/popup-closed-by-user":
-            setError("Sign-in process was cancelled.");
-            break;
-          default:
-            setError("An unexpected error occurred. Please try again.");
-            console.error("Auth Error:", error);
-            break;
-        }
-      }
-    );
-    return () => unsubscribe();
-  }, [auth]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    if (isSignUp) {
-      initiateEmailSignUp(auth, email, password);
-    } else {
-      initiateEmailSignIn(auth, email, password);
+  const handleAuthError = (error: AuthError) => {
+    switch (error.code) {
+      case "auth/invalid-email":
+        setError("Invalid email address format.");
+        break;
+      case "auth/user-not-found":
+      case "auth/wrong-password":
+      case "auth/invalid-credential":
+        setError("Invalid email or password.");
+        break;
+      case "auth/email-already-in-use":
+        setError("An account already exists with this email address.");
+        break;
+      case "auth/weak-password":
+        setError("Password should be at least 6 characters long.");
+        break;
+      case "auth/popup-closed-by-user":
+        setError("Sign-in process was cancelled.");
+        break;
+      default:
+        setError("An unexpected error occurred. Please try again.");
+        console.error("Auth Error:", error);
+        break;
     }
   };
 
-  const handleGoogleSignIn = () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setError(null);
-    initiateGoogleSignIn(auth);
+    try {
+      if (isSignUp) {
+        await initiateEmailSignUp(auth, email, password);
+      } else {
+        await initiateEmailSignIn(auth, email, password);
+      }
+      // On success, the useUser hook and useEffect above will handle the redirect.
+    } catch (err) {
+      handleAuthError(err as AuthError);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    try {
+      await initiateGoogleSignIn(auth);
+      // On success, the useUser hook and useEffect above will handle the redirect.
+    } catch (err) {
+      handleAuthError(err as AuthError);
+    }
   };
 
   if (isUserLoading || user) {
@@ -176,7 +176,7 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-               {error && (
+              {error && (
                 <p className="text-sm text-center text-destructive">{error}</p>
               )}
               <Button type="submit" className="w-full">
@@ -186,7 +186,7 @@ export default function LoginPage() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-center justify-center">
-           <div className="text-sm">
+          <div className="text-sm">
             {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <Button
               variant="link"
