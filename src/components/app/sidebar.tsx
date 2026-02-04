@@ -65,7 +65,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <div className="p-2">
-            <AddPromptDialog user={user}>
+            <AddPromptDialog>
                 <Button variant="outline" className="w-full">
                     <Plus className="mr-2 h-4 w-4" />
                     Add Prompt
@@ -74,27 +74,35 @@ export function AppSidebar() {
         </div>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/" isActive={pathname === '/'} tooltip="Home">
-              <Home />
-              <span>Home</span>
+            <SidebarMenuButton asChild isActive={pathname === '/'} tooltip="Home">
+              <Link href="/">
+                <Home />
+                <span>Home</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/library" isActive={pathname === '/library'} tooltip="My Library">
-              <Book />
-              <span>My Library</span>
+            <SidebarMenuButton asChild isActive={pathname === '/library'} tooltip="My Library">
+               <Link href="/library">
+                <Book />
+                <span>My Library</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/history" isActive={pathname === '/history'} tooltip="History">
-              <History />
-              <span>History</span>
+            <SidebarMenuButton asChild isActive={pathname === '/history'} tooltip="History">
+              <Link href="/history">
+                <History />
+                <span>History</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/analytics" isActive={pathname === '/analytics'} tooltip="Analytics">
-              <BarChartHorizontal />
-              <span>Analytics</span>
+            <SidebarMenuButton asChild isActive={pathname === '/analytics'} tooltip="Analytics">
+              <Link href="/analytics">
+                <BarChartHorizontal />
+                <span>Analytics</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -113,9 +121,11 @@ export function AppSidebar() {
               <SidebarMenuSub className="mt-2">
                 {categories.map(category => (
                   <SidebarMenuSubItem key={category.name}>
-                    <SidebarMenuSubButton href={`/category/${category.name.toLowerCase()}`}>
-                      <category.icon className="h-4 w-4 text-muted-foreground" />
-                      <span>{category.name}</span>
+                    <SidebarMenuSubButton href={`/?category=${category.name}`} asChild>
+                      <Link href={`/?category=${category.name}`}>
+                        <category.icon className="h-4 w-4 text-muted-foreground" />
+                        <span>{category.name}</span>
+                      </Link>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                 ))}
@@ -127,20 +137,24 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/settings" tooltip="Settings">
-              <Settings />
-              <span>Settings</span>
+            <SidebarMenuButton asChild href="/settings" tooltip="Settings">
+              <Link href="/settings">
+                <Settings />
+                <span>Settings</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton href="/profile" tooltip="Profile">
-                <div className='flex items-center gap-2'>
-                    <Avatar className="h-7 w-7">
-                        <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt={user?.displayName ?? "User Avatar"} />
-                        <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
-                    </Avatar>
-                    <span className="truncate">{user?.displayName || 'User'}</span>
-                </div>
+            <SidebarMenuButton asChild href="/profile" tooltip="Profile">
+                <Link href="/profile">
+                    <div className='flex items-center gap-2'>
+                        <Avatar className="h-7 w-7">
+                            <AvatarImage src={user?.photoURL ?? userAvatar?.imageUrl} alt={user?.displayName ?? "User Avatar"} />
+                            <AvatarFallback>{user?.email?.charAt(0).toUpperCase() || 'U'}</AvatarFallback>
+                        </Avatar>
+                        <span className="truncate">{user?.displayName || 'User'}</span>
+                    </div>
+                </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

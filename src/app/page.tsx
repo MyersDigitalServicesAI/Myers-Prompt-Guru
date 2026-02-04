@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AppSidebar } from '@/components/app/sidebar';
 import { AppHeader } from '@/components/app/header';
 import { PromptCard } from '@/components/app/prompt-card';
@@ -11,11 +12,20 @@ import { SidebarInset } from '@/components/ui/sidebar';
 import { GoProDialog } from '@/components/app/go-pro-dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Sparkles } from 'lucide-react';
+import { FileText, Sparkles, Search, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useUser, useDoc, useCollection, useMemoFirebase, useFirestore } from '@/firebase';
+import { useUser, useCollection, useMemoFirebase, useFirestore } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { doc, collection, query, orderBy } from 'firebase/firestore';
+import { Input } from '@/components/ui/input';
+
+const categories = [
+    { name: 'Creative' },
+    { name: 'Technical' },
+    { name: 'Marketing' },
+    { name: 'Health' },
+    { name: 'Lifestyle' },
+  ];
 
 function DashboardLoading() {
   return (
@@ -53,31 +63,33 @@ function DashboardLoading() {
   );
 }
 
-function EmptyState() {
+function EmptyState({ onReset }: { onReset: () => void }) {
     return (
         <div className="text-center">
             <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h3 className="mt-4 text-lg font-medium">No prompts yet</h3>
+            <h3 className="mt-4 text-lg font-medium">No Prompts Found</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-                Get started by creating or importing a new prompt.
+                Your search or filter returned no results.
             </p>
             <div className="mt-6">
-                {/* The AddPromptDialog is available in the header/sidebar */}
+                <Button onClick={onReset}>Clear Filters</Button>
             </div>
         </div>
     )
 }
 
 export default function DashboardPage() {
-  const { user, isUserLoading: isAuthLoading } = useUser();
+  const { user, userProfile, isUserLoading: isAuthLoading } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const firestore = useFirestore();
 
-  const userRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [user, firestore]);
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userRef);
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [selectedCategory, setSelectedCategory] = React.useState(searchParams.get('category') || 'All');
+
+  React.useEffect(() => {
+    setSelectedCategory(searchParams.get('category') || 'All');
+  }, [searchParams]);
 
   const promptsQuery = useMemoFirebase(() => {
     if (!user) return null;
@@ -95,10 +107,22 @@ export default function DashboardPage() {
     }
   }, [user, isAuthLoading, router]);
 
+  const filteredPrompts = React.useMemo(() => {
+    if (!prompts) return [];
+    return prompts.filter(prompt => {
+      const categoryMatch = selectedCategory === 'All' || prompt.category === selectedCategory;
+      const searchMatch = searchQuery.trim() === '' || 
+                          prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          prompt.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+      return categoryMatch && searchMatch;
+    });
+  }, [prompts, selectedCategory, searchQuery]);
+
   const allVariables = React.useMemo(() => {
     const varSet = new Set<string>();
-    if (prompts) {
-        prompts.forEach(prompt => {
+    if (filteredPrompts) {
+        filteredPrompts.forEach(prompt => {
             const matches = prompt.template.match(/\[(.*?)\]/g);
             if (matches) {
                 matches.forEach(match => {
@@ -108,17 +132,23 @@ export default function DashboardPage() {
         });
     }
     return Array.from(varSet);
-  }, [prompts]);
+  }, [filteredPrompts]);
 
   React.useEffect(() => {
     const initialVars: Record<string, string> = {};
     allVariables.forEach(v => {
-      initialVars[v] = '';
+      initialVars[v] = values[v] || '';
     });
     setVariables(initialVars);
   }, [allVariables]);
 
-  const isLoading = isAuthLoading || isProfileLoading || arePromptsLoading;
+  const handleResetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('All');
+    router.push('/');
+  }
+
+  const isLoading = isAuthLoading || arePromptsLoading;
 
   if (isLoading || !user) {
     return <DashboardLoading />;
@@ -136,20 +166,40 @@ export default function DashboardPage() {
               Discover, create, and manage your AI prompts. Use the inputs below to see them update in real-time.
             </p>
           </div>
+
+          <div className="space-y-4">
+            <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input 
+                    placeholder="Search by title, description, or tag..."
+                    className="pl-9"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+                <Button variant={selectedCategory === 'All' ? 'default' : 'outline'} onClick={() => setSelectedCategory('All')}>All</Button>
+                {categories.map(cat => (
+                    <Button key={cat.name} variant={selectedCategory === cat.name ? 'default' : 'outline'} onClick={() => setSelectedCategory(cat.name)}>{cat.name}</Button>
+                ))}
+            </div>
+          </div>
+
           <VariableInputs
             variables={allVariables}
             values={variables}
             onValueChange={(key, value) => setVariables(prev => ({ ...prev, [key]: value }))}
           />
-          {prompts && prompts.length > 0 ? (
+
+          {filteredPrompts && filteredPrompts.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {prompts.map(prompt => (
+              {filteredPrompts.map(prompt => (
                 <PromptCard key={prompt.id} prompt={prompt} variables={variables} />
               ))}
             </div>
           ) : (
             <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/20 py-24">
-                <EmptyState />
+                <EmptyState onReset={handleResetFilters} />
             </div>
           )}
         </main>

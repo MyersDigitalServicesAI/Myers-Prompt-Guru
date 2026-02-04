@@ -1,17 +1,19 @@
 'use client';
 
 import * as React from 'react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import { useFormState } from 'react-dom';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
 import { useUser, useDoc, useMemoFirebase, useFirestore, useCollection } from '@/firebase';
 import { doc, collection, query } from 'firebase/firestore';
 import { GoProDialog } from '@/components/app/go-pro-dialog';
 import { Button } from '@/components/ui/button';
-import { Sparkles, BarChartHorizontal } from 'lucide-react';
+import { Sparkles, BarChartHorizontal, Loader2 } from 'lucide-react';
 import { type UserProfile, type PromptEvent, type Prompt } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { handleInsight } from '@/app/actions/analytics';
 
 const chartConfig = {
     copies: {
@@ -62,16 +64,48 @@ function NonProPlaceholder() {
 }
 
 
+function AIInsight({ prompts, events }: { prompts: Prompt[], events: PromptEvent[] }) {
+    const [formState, formAction] = useFormState(handleInsight, {
+        message: "",
+        response: null,
+    });
+    const formRef = React.useRef<HTMLFormElement>(null);
+
+    React.useEffect(() => {
+        // Automatically submit the form when the component mounts with data
+        if (prompts && events && prompts.length > 0 && events.length > 0 && formRef.current) {
+            const formData = new FormData(formRef.current);
+            formAction(formData);
+        }
+    }, [prompts, events]); // Only re-run if prompts or events change
+
+    return (
+        <Alert className="bg-primary/5 border-primary/20">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <AlertTitle className="text-primary">AI Insight</AlertTitle>
+            <AlertDescription>
+                {formState.response ? (
+                    formState.response
+                ) : (
+                    <span className="flex items-center">
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating your personalized insight...
+                    </span>
+                )}
+            </AlertDescription>
+            {/* Hidden form to trigger server action */}
+            <form action={formAction} ref={formRef} className="hidden">
+                <input type="hidden" name="prompts" value={JSON.stringify(prompts)} />
+                <input type="hidden" name="events" value={JSON.stringify(events)} />
+            </form>
+        </Alert>
+    )
+}
+
+
 export default function AnalyticsPage() {
-    const { user, isUserLoading: isAuthLoading } = useUser();
+    const { user, userProfile, isUserLoading: isAuthLoading } = useUser();
     const firestore = useFirestore();
-
-    const userRef = useMemoFirebase(() => {
-        if (!user) return null;
-        return doc(firestore, 'users', user.uid);
-    }, [user, firestore]);
-
-    const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userRef);
 
     const promptsQuery = useMemoFirebase(() => {
         if (!user) return null;
@@ -125,7 +159,7 @@ export default function AnalyticsPage() {
 
     }, [events, prompts]);
 
-    const isLoading = isAuthLoading || isProfileLoading || arePromptsLoading || areEventsLoading;
+    const isLoading = isAuthLoading || arePromptsLoading || areEventsLoading;
 
     if (isLoading) {
         return <AnalyticsLoading />;
@@ -144,13 +178,9 @@ export default function AnalyticsPage() {
                 </p>
             </div>
             
-            <Alert className="bg-primary/5 border-primary/20">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <AlertTitle className="text-primary">Coming Soon: AI Insights</AlertTitle>
-                <AlertDescription>
-                   We're building an AI that will analyze this data and give you actionable advice to improve your prompts.
-                </AlertDescription>
-            </Alert>
+            {(prompts && events && prompts.length > 0 && events.length > 0) && (
+                <AIInsight prompts={prompts} events={events} />
+            )}
 
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>

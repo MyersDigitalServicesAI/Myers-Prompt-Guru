@@ -25,7 +25,7 @@ import { ScreenshotImportTab } from "./screenshot-import-tab";
 import { useFirestore, addDocumentNonBlocking, useUser } from "@/firebase";
 import { collection } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
-import type { User } from "firebase/auth";
+import { GoProDialog } from "./go-pro-dialog";
 
 function BulkImportSubmitButton() {
   const { pending } = useFormStatus();
@@ -70,7 +70,8 @@ function ExtractedPrompts({ prompts, onSave }: { prompts: ExtractPromptsOutput, 
   );
 }
 
-function BulkImportTab({ user }: { user: User | null }) {
+function BulkImportTab() {
+    const { user } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
 
@@ -130,8 +131,26 @@ function BulkImportTab({ user }: { user: User | null }) {
     )
 }
 
-export function AddPromptDialog({ children, user }: { children: React.ReactNode, user: User | null }) {
+function NonProPlaceholder() {
+    return (
+        <div className="flex flex-col items-center justify-center text-center p-8 space-y-4">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+                <Sparkles className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold">Unlock AI-Powered Imports</h3>
+            <p className="text-muted-foreground text-sm">
+                Upgrade to Pro to instantly import prompts from text or screenshots.
+            </p>
+            <GoProDialog>
+                <Button>Upgrade to Pro</Button>
+            </GoProDialog>
+        </div>
+    )
+}
+
+export function AddPromptDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = React.useState(false);
+  const { userProfile } = useUser();
   
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -143,18 +162,24 @@ export function AddPromptDialog({ children, user }: { children: React.ReactNode,
             Use AI to bulk import from text or a screenshot. This is a Pro feature.
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="bulk-text" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="bulk-text">From Text</TabsTrigger>
-                <TabsTrigger value="screenshot">From Screenshot</TabsTrigger>
-            </TabsList>
-            <TabsContent value="bulk-text">
-                <BulkImportTab user={user} />
-            </TabsContent>
-            <TabsContent value="screenshot">
-                <ScreenshotImportTab user={user} />
-            </TabsContent>
-        </Tabs>
+
+        {userProfile?.isPro ? (
+            <Tabs defaultValue="bulk-text" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="bulk-text">From Text</TabsTrigger>
+                    <TabsTrigger value="screenshot">From Screenshot</TabsTrigger>
+                </TabsList>
+                <TabsContent value="bulk-text">
+                    <BulkImportTab />
+                </TabsContent>
+                <TabsContent value="screenshot">
+                    <ScreenshotImportTab />
+                </TabsContent>
+            </Tabs>
+        ) : (
+            <NonProPlaceholder />
+        )}
+
       </DialogContent>
     </Dialog>
   );

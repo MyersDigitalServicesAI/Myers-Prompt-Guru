@@ -3,10 +3,10 @@
 import * as React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { collection, doc, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { ArrowLeft, Edit, Save, X } from 'lucide-react';
+import { ArrowLeft, Edit, Save, X, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
-import { useDoc, useFirestore, useUser, updateDocumentNonBlocking, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
+import { useDoc, useFirestore, useUser, updateDocumentNonBlocking, addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase';
 import { type Prompt, type PromptVersion } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +17,17 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { PromptVersionHistory } from '@/components/app/prompt-version-history';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
 
 function PromptPageLoading() {
     return (
@@ -130,6 +141,19 @@ export default function PromptDetailPage() {
         // The useDoc hook will automatically update the UI, including the form fields via useEffect
     };
 
+    const handleDelete = () => {
+        if (!promptRef) return;
+        
+        deleteDocumentNonBlocking(promptRef);
+
+        toast({
+            title: "Prompt deleted",
+            description: "The prompt has been permanently removed.",
+        });
+
+        router.push('/');
+    }
+
 
     const isLoading = isUserLoading || isPromptLoading;
 
@@ -198,7 +222,7 @@ export default function PromptDetailPage() {
                         </div>
                     </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex items-center justify-between">
                     {isEditing ? (
                         <div className="flex gap-2">
                             <Button onClick={handleSave}><Save className="mr-2 h-4 w-4"/>Save</Button>
@@ -207,6 +231,24 @@ export default function PromptDetailPage() {
                     ) : (
                         <Button onClick={() => setIsEditing(true)}><Edit className="mr-2 h-4 w-4" />Edit</Button>
                     )}
+
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" className="ml-auto"><Trash2 className="mr-2 h-4 w-4"/>Delete</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete this prompt and all of its version history.
+                            </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardFooter>
             </Card>
 

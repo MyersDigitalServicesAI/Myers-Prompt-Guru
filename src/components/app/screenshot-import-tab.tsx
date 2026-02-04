@@ -12,9 +12,8 @@ import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import { type ExtractPromptsOutput } from "@/ai/flows/ai-bulk-import-extract-prompts";
 import { ScrollArea } from "../ui/scroll-area";
-import { useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { useFirestore, addDocumentNonBlocking, useUser } from "@/firebase";
 import { collection } from "firebase/firestore";
-import type { User } from "firebase/auth";
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
@@ -57,7 +56,8 @@ function ExtractedScreenshotPrompts({ prompts, onSave }: { prompts: ExtractPromp
     );
   }
 
-export function ScreenshotImportTab({ user }: { user: User | null }) {
+export function ScreenshotImportTab() {
+  const { user } = useUser();
   const [imageData, setImageData] = React.useState<string | null>(null);
   const [imagePreview, setImagePreview] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
