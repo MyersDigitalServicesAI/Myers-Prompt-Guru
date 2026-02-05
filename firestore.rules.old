@@ -7,7 +7,6 @@
  * - User Enumeration is Forbidden: Listing the top-level `/users` collection is explicitly denied to prevent malicious actors from discovering all users of the application.
  * - Strict Path-Based Ownership: All access decisions for subcollections (like `/prompts`) are based on the `{userId}` wildcard in the path, ensuring a user can only ever access data within their own tree.
  * - Default Deny: Any path not explicitly matched is inaccessible. All operations (`get`, `list`, `create`, `update`, `delete`) are denied by default unless an `allow` rule specifically grants access.
- * - Stripe Field Protection: Stripe-related fields (stripeCustomerId, stripeSubscriptionId, subscriptionStatus, isPro) cannot be modified by clients. Only backend services can update these fields.
  *
  * Denormalization for Authorization: This ruleset leverages a path-based security model which is highly performant. The user's ID (`userId`) in the document path (`/users/{userId}/...`) is the source of truth for ownership, eliminating the need for slow and costly `get()` calls to other documents for authorization checks.
  *
@@ -55,35 +54,9 @@ service cloud.firestore {
     /**
      * Validates that the 'id' field of a 'User' document is immutable.
      * This prevents an ownership link from being changed after creation.
-     * 
-     * STRIPE SECURITY: Also prevents clients from modifying Stripe-related fields.
-     * Only backend services (via Admin SDK) can update these fields.
      */
     function isUpdatingValidUser() {
-      let validIdUpdate = request.resource.data.id == resource.data.id;
-      
-      // List of Stripe fields that cannot be modified by clients
-      let stripeFields = ['stripeCustomerId', 'stripeSubscriptionId', 'subscriptionStatus', 
-                          'subscriptionEndDate', 'cancelAtPeriodEnd'];
-      
-      // Check if any Stripe field is being modified
-      let stripeFieldsUnchanged = !request.resource.data.keys().hasAny(stripeFields) ||
-        ((!('stripeCustomerId' in request.resource.data) || 
-          request.resource.data.stripeCustomerId == resource.data.get('stripeCustomerId', null)) &&
-         (!('stripeSubscriptionId' in request.resource.data) || 
-          request.resource.data.stripeSubscriptionId == resource.data.get('stripeSubscriptionId', null)) &&
-         (!('subscriptionStatus' in request.resource.data) || 
-          request.resource.data.subscriptionStatus == resource.data.get('subscriptionStatus', null)) &&
-         (!('subscriptionEndDate' in request.resource.data) || 
-          request.resource.data.subscriptionEndDate == resource.data.get('subscriptionEndDate', null)) &&
-         (!('cancelAtPeriodEnd' in request.resource.data) || 
-          request.resource.data.cancelAtPeriodEnd == resource.data.get('cancelAtPeriodEnd', null)));
-      
-      // isPro field also cannot be modified by clients (only backend via webhooks)
-      let isProUnchanged = !('isPro' in request.resource.data) || 
-                           request.resource.data.isPro == resource.data.get('isPro', false);
-      
-      return validIdUpdate && stripeFieldsUnchanged && isProUnchanged;
+      return request.resource.data.id == resource.data.id;
     }
 
     /**
@@ -110,7 +83,6 @@ service cloud.firestore {
      * @path /users/{userId}
      * @allow A user (auth.uid='user123') can (get) their own profile at /users/user123.
      * @deny A user (auth.uid='userABC') cannot (get) another user's profile at /users/user123.
-     * @deny A user cannot modify Stripe-related fields or isPro status (backend-only).
      * @principle Restricts access to a user's own data tree and prevents user enumeration.
      */
     match /users/{userId} {

@@ -11,8 +11,9 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Check, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { Check, Sparkles, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "@/firebase";
 
 const proFeatures = [
     "Unlimited Prompt Saves & Storage",
@@ -24,6 +25,48 @@ const proFeatures = [
 ];
 
 export function GoProDialog({ children }: { children: React.ReactNode }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+
+  const handleUpgrade = async () => {
+    if (!user) {
+      setError("Please sign in to upgrade");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Get Firebase ID token
+      const idToken = await user.getIdToken();
+
+      // Call our API to create checkout session
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+    } catch (err) {
+      console.error('Error creating checkout session:', err);
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -46,13 +89,29 @@ export function GoProDialog({ children }: { children: React.ReactNode }) {
                     </li>
                 ))}
             </ul>
+            {error && (
+              <div className="text-sm text-destructive text-center">
+                {error}
+              </div>
+            )}
         </div>
         <DialogFooter className="flex-col sm:flex-col sm:space-x-0 gap-2">
-          <Link href="https://buy.stripe.com/00w7sM0ob4h88Of1JqbQY0b" target="_blank" className={buttonVariants({className: "w-full"})}>
-            Upgrade for $5.00
-          </Link>
+          <Button 
+            onClick={handleUpgrade} 
+            disabled={isLoading}
+            className="w-full"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              'Upgrade for $5.00/month'
+            )}
+          </Button>
           <DialogClose asChild>
-            <Button type="button" variant="ghost" className="w-full">
+            <Button type="button" variant="ghost" className="w-full" disabled={isLoading}>
                 Not now
             </Button>
           </DialogClose>
