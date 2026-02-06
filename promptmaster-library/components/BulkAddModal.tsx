@@ -145,40 +145,40 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={closeModal} />
 
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-2xl glass rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-white/10">
 
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-100">
-          <div className="flex items-center gap-3">
-            <div className="bg-purple-100 p-2 rounded-lg text-purple-600">
-              <Sparkles className="w-5 h-5" />
+        <div className="flex items-center justify-between p-8 border-b border-white/5">
+          <div className="flex items-center gap-4">
+            <div className="bg-purple-500/10 p-3 rounded-2xl text-purple-400 border border-purple-500/20 shadow-lg shadow-purple-500/5">
+              <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900">AI Bulk Import</h2>
-              <p className="text-sm text-slate-500">Extract from Text, Photos, or Screenshots</p>
+              <h2 className="text-2xl font-black text-white tracking-tight">AI Constructor</h2>
+              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Multi-Modal Import Engine</p>
             </div>
           </div>
-          <button onClick={closeModal} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors">
-            <X className="w-5 h-5" />
+          <button onClick={closeModal} className="p-3 text-slate-500 hover:bg-white/5 hover:text-white rounded-2xl transition-all">
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="p-8 overflow-y-auto flex-1 custom-scrollbar">
           {step === 'input' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               {error && (
-                <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
+                <div className="p-5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-sm font-medium flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5" />
                   {error}
                 </div>
               )}
 
               <div className="relative">
                 {selectedImage ? (
-                  <div className="w-full h-64 bg-slate-900 rounded-xl relative flex items-center justify-center overflow-hidden border border-slate-200">
+                  <div className="w-full h-80 bg-black/40 rounded-[2rem] relative flex items-center justify-center overflow-hidden border border-white/10 shadow-inner">
                     <img
                       src={selectedImage.url}
                       alt="Preview"
@@ -186,30 +186,30 @@ export const BulkAddModal: React.FC<BulkAddModalProps> = ({ isOpen, onClose, onI
                     />
                     <button
                       onClick={() => setSelectedImage(null)}
-                      className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full hover:bg-red-500 transition-colors"
+                      className="absolute top-4 right-4 p-2 bg-black/60 text-white rounded-xl hover:bg-red-500 transition-all backdrop-blur-md shadow-2xl"
                       title="Remove Image"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-5 h-5" />
                     </button>
-                    <div className="absolute bottom-2 left-2 px-2 py-1 bg-black/50 text-white text-xs rounded">
-                      Image Mode
+                    <div className="absolute bottom-4 left-4 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg shadow-xl">
+                      Image Context Active
                     </div>
                   </div>
                 ) : (
                   <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="Paste your text or drop an image here...
+                    placeholder="Paste architectural text or drop screenshots here...
                     
 Supported:
-- Text content
+- Raw prompt descriptions
 - Screenshots (Ctrl+V)
-- Photos of handwritten notes"
-                    className="w-full h-64 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none resize-none"
+- Handwritten engineering notes"
+                    className="w-full h-80 p-6 bg-white/5 border border-white/10 rounded-[2rem] text-sm font-medium text-white focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 outline-none resize-none placeholder-slate-600 shadow-inner leading-relaxed"
                   />
                 )}
 
-                <div className="absolute bottom-4 right-4 flex gap-2">
+                <div className="absolute bottom-6 right-6 flex gap-3">
                   <input
                     type="file"
                     ref={imageInputRef}
@@ -229,58 +229,63 @@ Supported:
                     <>
                       <button
                         onClick={() => imageInputRef.current?.click()}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-medium text-slate-600 hover:text-purple-600 hover:border-purple-200 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 shadow-xl rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:border-white/20 transition-all backdrop-blur-md"
                       >
-                        <Camera className="w-3 h-3" />
-                        <span className="hidden sm:inline">Photo/Screenshot</span>
+                        <Camera className="w-4 h-4" />
+                        <span className="hidden sm:inline">Camera/OCR</span>
                       </button>
                       <button
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 shadow-sm rounded-lg text-xs font-medium text-slate-600 hover:text-purple-600 hover:border-purple-200 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 shadow-xl rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:border-white/20 transition-all backdrop-blur-md"
                       >
-                        <Upload className="w-3 h-3" />
-                        <span className="hidden sm:inline">Text File</span>
+                        <Upload className="w-4 h-4" />
+                        <span className="hidden sm:inline">File System</span>
                       </button>
                     </>
                   )}
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 text-center">
-                Tip: You can paste screenshots (Ctrl+V) directly into the box.
+              <p className="text-[10px] font-black text-slate-600 text-center uppercase tracking-widest">
+                Ctrl+V to inject screenshots directly for instant OCR mapping.
               </p>
             </div>
           )}
 
           {step === 'processing' && (
-            <div className="flex flex-col items-center justify-center py-12 space-y-4">
-              <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
+            <div className="flex flex-col items-center justify-center py-20 space-y-6">
+              <div className="relative">
+                <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 text-purple-500 animate-pulse" />
+                </div>
+              </div>
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-slate-900">Analyzing Content</h3>
-                <p className="text-slate-500 text-sm">
-                  {selectedImage ? "Scanning image for text & context..." : "Identifying prompts & categorizing..."}
+                <h3 className="text-xl font-black text-white tracking-tight">Neural Mapping...</h3>
+                <p className="text-slate-500 text-sm font-medium">
+                  {selectedImage ? "Deciphering visual prompt architecture..." : "Parsing structure & metadata..."}
                 </p>
               </div>
             </div>
           )}
 
           {step === 'review' && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-slate-900">Found {extracted.length} Prompts</h3>
+                <h3 className="font-black text-white text-lg tracking-tight">Discovered {extracted.length} Units</h3>
               </div>
 
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 {extracted.map((item, idx) => (
-                  <div key={idx} className="p-4 border border-slate-200 rounded-lg bg-slate-50/50 flex gap-4">
+                  <div key={idx} className="p-5 glass border border-white/5 rounded-2xl flex gap-4 hover:border-white/10 transition-colors">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-100 text-blue-700">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20">
                           {item.category}
                         </span>
-                        <h4 className="font-medium text-slate-900 truncate">{item.title}</h4>
+                        <h4 className="font-bold text-white truncate text-base">{item.title}</h4>
                       </div>
-                      <p className="text-xs text-slate-500 truncate">{item.description}</p>
+                      <p className="text-xs text-slate-500 font-medium truncate leading-relaxed">{item.description}</p>
                     </div>
                   </div>
                 ))}
@@ -290,10 +295,10 @@ Supported:
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end gap-3">
+        <div className="p-8 bg-black/20 border-t border-white/5 flex justify-end gap-4">
           <button
             onClick={closeModal}
-            className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition-colors"
+            className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all"
           >
             Cancel
           </button>
@@ -302,20 +307,20 @@ Supported:
             <button
               onClick={processContent}
               disabled={!text.trim() && !selectedImage}
-              className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-purple-500/30 flex items-center gap-2"
+              className="px-8 py-3 btn-primary text-white text-[10px] font-black uppercase tracking-widest rounded-2xl disabled:opacity-30 disabled:grayscale transition-all shadow-2xl active:scale-95 flex items-center gap-3"
             >
               <Sparkles className="w-4 h-4" />
-              Analyze
+              Analyze Strategy
             </button>
           )}
 
           {step === 'review' && (
             <button
               onClick={handleFinalImport}
-              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all shadow-lg shadow-green-500/30 flex items-center gap-2"
+              className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all shadow-2xl shadow-emerald-500/20 active:scale-95 flex items-center gap-3"
             >
               <CheckCircle className="w-4 h-4" />
-              Import {extracted.length} Prompts
+              Deploy {extracted.length} Units
             </button>
           )}
         </div>

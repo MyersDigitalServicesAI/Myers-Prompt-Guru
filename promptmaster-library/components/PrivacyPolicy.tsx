@@ -3,67 +3,61 @@ import { Shield, Lock, Eye, FileText, ArrowLeft, Sparkles } from 'lucide-react';
 
 export const PrivacyPolicy: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     return (
-        <div className="fixed inset-0 z-[100] bg-white overflow-y-auto animate-in fade-in duration-300">
-            <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="fixed inset-0 z-[100] bg-[#020617] overflow-y-auto animate-in fade-in duration-500 custom-scrollbar">
+            {/* Background Accents */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+                <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-blue-600/5 rounded-full blur-[150px]"></div>
+            </div>
+
+            <div className="max-w-4xl mx-auto px-6 py-16">
                 <button
                     onClick={onClose}
-                    className="mb-8 flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group"
+                    className="mb-12 flex items-center gap-3 text-slate-500 hover:text-white transition-all group font-black uppercase tracking-widest text-xs"
                 >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Back to Library
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+                    Void Legal View
                 </button>
 
-                <header className="mb-12">
-                    <div className="bg-blue-100 w-16 h-16 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
-                        <Shield className="w-8 h-8" />
+                <header className="mb-20">
+                    <div className="bg-blue-500/10 w-20 h-20 rounded-[2rem] flex items-center justify-center text-blue-400 mb-8 border border-blue-500/20 shadow-2xl">
+                        <Shield className="w-10 h-10" />
                     </div>
-                    <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Privacy Policy</h1>
-                    <p className="text-slate-500">Last updated: February 2, 2026</p>
+                    <h1 className="text-6xl font-black text-white mb-4 tracking-tighter">PRIVACY <span className="text-blue-500">PROTOCOL</span></h1>
+                    <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">REVISION 02.02.2026 • SECTOR ALPHA</p>
                 </header>
 
-                <div className="prose prose-slate max-w-none space-y-8 text-slate-700">
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Lock className="w-5 h-5 text-blue-500" /> 1. Information We Collect
+                <div className="max-w-none space-y-12">
+                    <section className="glass p-10 rounded-[2.5rem] border border-white/5">
+                        <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-4 tracking-tight">
+                            <Lock className="w-6 h-6 text-blue-500" /> DATA ACQUISITION
                         </h2>
-                        <p>We collect information you provide directly to us when you create an account, save prompts, or communicate with our AI Guru. This may include:</p>
-                        <ul className="list-disc pl-6 space-y-2 mt-2">
-                            <li>Name and email address</li>
-                            <li>Subscription and payment status (via Stripe)</li>
-                            <li>Prompt history and saved content</li>
-                            <li>Communication data with our AI services</li>
-                        </ul>
+                        <div className="text-slate-400 space-y-4 font-medium leading-relaxed">
+                            <p>We aggregate architectural signals provided directly during node creation, unit optimization, and Guru Oracle synchronization. This includes:</p>
+                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                                {[
+                                    "Neural Identity (Name/Email)",
+                                    "Subscription State (Via Stripe)",
+                                    "Unit Deployment History",
+                                    "Guru Oracle Communication Logs"
+                                ].map((item, i) => (
+                                    <li key={i} className="flex items-center gap-3 bg-white/5 p-4 rounded-2xl border border-white/5">
+                                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                        <span className="text-slate-300 text-sm">{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Eye className="w-5 h-5 text-blue-500" /> 2. How We Use Your Information
+                    <section className="glass p-10 rounded-[2.5rem] border border-white/5">
+                        <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-4 tracking-tight">
+                            <Sparkles className="w-6 h-6 text-blue-500" /> NEURAL PROCESSING
                         </h2>
-                        <p>We use the information we collect to:</p>
-                        <ul className="list-disc pl-6 space-y-2 mt-2">
-                            <li>Provide, maintain, and improve our services</li>
-                            <li>Process your transactions and manage your Pro subscription</li>
-                            <li>Personalize your experience with the AI Guru</li>
-                            <li>Communicate with you about products, services, and events</li>
-                        </ul>
+                        <p className="text-slate-400 font-medium leading-relaxed">Our infrastructure leverages Gemini Neural Engines for unit extraction. No personal units are used for global training. All transmissions pass through encrypted architectural proxies.</p>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-blue-500" /> 3. AI Data Processing
-                        </h2>
-                        <p>Our application uses Google Gemini (AI) to process prompts and images. While we do not use your personal prompts to train global models, data sent to these services is subject to their respective privacy policies. We implement a secure backend proxy to protect your identifying information during these calls.</p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-blue-500" /> 4. Data Security
-                        </h2>
-                        <p>We implement industry-standard security measures to protect your data. Payment information is handled exclusively by Stripe and is never stored on our servers.</p>
-                    </section>
-
-                    <footer className="pt-12 border-t border-slate-100 text-sm text-slate-400">
-                        <p>&copy; 2026 Myers Digital Services. All rights reserved.</p>
+                    <footer className="pt-20 pb-10 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-700">&copy; 2026 MYERS DIGITAL SERVICES • ALL RIGHTS RESERVED</p>
                     </footer>
                 </div>
             </div>

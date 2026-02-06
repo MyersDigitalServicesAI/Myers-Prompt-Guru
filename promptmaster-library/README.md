@@ -2,9 +2,9 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Myers Prompt Guru
-
-**Myers Prompt Guru** is a state-of-the-art prompt management library and development environment. It combines an intuitive library interface with powerful, real-time prompt engineering tools and a specialized AI Guru with a deep, protected knowledge base.
+# Myerspromptguru
+ 
+**Myerspromptguru** is a state-of-the-art prompt management library and development environment. It combines an intuitive library interface with powerful, real-time prompt engineering tools and a specialized AI Guru with a deep, protected knowledge base.
 
 ## 🚀 Key Features
 
@@ -49,6 +49,8 @@ This app is optimized for deployment on **Vercel**.
 - **Framework**: Vite
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Environment Variables**: Add `GEMINI_API_KEY` in your Vercel project settings.
+- **Environment Variables**: 
+    - `GEMINI_API_KEY`: Your Google Gemini API Key.
+    - `STRIPE_SECRET_KEY`: (Production) Your Stripe Secret Key for payment verification.
 
 See the [Deployment Guide](file:///C:/Users/dm083/.gemini/antigravity/brain/67ae647f-49c4-4167-aff9-cb0206d08958/deployment_guide.md) for detailed steps.

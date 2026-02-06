@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Myers Prompt Guru | The Ultimate Prompt Engineering Library</title>
+  <title>Myerspromptguru | The Ultimate Prompt Engineering Library</title>
   <meta name="description"
     content="Discover, edit, and optimize AI prompts with Myers Prompt Guru. Features a real-time editor, AI-powered extraction, and specialized expert guidance." />
   <meta name="keywords" content="AI, Prompt Engineering, LLM, Gemini, GPT, Prompt Library, Prompt Architecture" />
@@ -45,8 +45,10 @@
   </script>
   <style>
     body {
-      background-color: #F8FAFC;
+      background-color: #020617;
+      color: #f8fafc;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* Premium Animations */
@@ -68,22 +70,6 @@
       animation: float 3s ease-in-out infinite;
     }
 
-    @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-
-      100% {
-        background-position: 1000px 0;
-      }
-    }
-
-    .shimmer {
-      background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 50%, #F1F5F9 100%);
-      background-size: 1000px 100%;
-      animation: shimmer 2s infinite linear;
-    }
-
     /* Transitions */
     .page-transition {
       animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -103,22 +89,30 @@
 
     /* Custom Scrollbar for aesthetic finish */
     ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
     }
 
     ::-webkit-scrollbar-track {
-      background: #F8FAFC;
+      background: #020617;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #E2E8F0;
-      border-radius: 10px;
-      border: 2px solid #F8FAFC;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      border: 2px solid #020617;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #CBD5E1;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.2);
     }
   </style>
   <script type="importmap">

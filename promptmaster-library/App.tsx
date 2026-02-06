@@ -319,7 +319,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
+    <div className="flex h-screen bg-[#020617] text-slate-200 overflow-hidden font-sans">
+
+      {/* Dynamic Background Accents */}
+      <div className="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      </div>
 
       {/* Navigation */}
       <Sidebar
@@ -337,11 +343,11 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
 
         {/* Top Header */}
-        <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10 sticky top-0 shadow-sm">
+        <header className="glass border-b border-white/5 px-6 py-4 flex items-center justify-between z-40 sticky top-0">
           <div className="flex items-center gap-4 w-full max-w-4xl">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-md"
+              className="lg:hidden p-2.5 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl transition-all"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -353,7 +359,7 @@ const App: React.FC = () => {
               </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-8 py-2.5 border border-slate-200 rounded-lg leading-5 bg-slate-50 text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className="block w-full pl-10 pr-8 py-2.5 bg-white/5 border border-white/10 rounded-xl leading-5 text-white placeholder-slate-500 focus:outline-none focus:bg-white/10 focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 transition-all"
                 placeholder="Search... (Try 'var:Topic', '-python', or '#seo')"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -374,24 +380,30 @@ const App: React.FC = () => {
             </div>
 
             {/* Sorting & Filter Controls */}
-            <div className="hidden md:flex items-center gap-3 border-l border-slate-200 pl-4">
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="text-sm font-medium text-slate-600 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-600"
-              >
-                {Object.values(SortOption).map(opt => <option key={opt} value={opt}>{opt}</option>)}
-              </select>
+            <div className="hidden md:flex items-center gap-4 border-l border-white/5 pl-6">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Sort:</span>
+                <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value as SortOption)}
+                  className="text-xs font-black text-slate-400 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-400 transition-colors uppercase tracking-widest"
+                >
+                  {Object.values(SortOption).map(opt => <option key={opt} value={opt} className="bg-slate-900">{opt}</option>)}
+                </select>
+              </div>
 
-              <select
-                value={minRating}
-                onChange={(e) => setMinRating(Number(e.target.value))}
-                className="text-sm font-medium text-slate-600 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-600"
-              >
-                <option value={0}>All Ratings</option>
-                <option value={4}>4+ Stars</option>
-                <option value={4.5}>4.5+ Stars</option>
-              </select>
+              <div className="flex items-center gap-2 border-l border-white/5 pl-4">
+                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Level:</span>
+                <select
+                  value={minRating}
+                  onChange={(e) => setMinRating(Number(e.target.value))}
+                  className="text-xs font-black text-slate-400 bg-transparent border-none focus:ring-0 cursor-pointer hover:text-blue-400 transition-colors uppercase tracking-widest"
+                >
+                  <option value={0} className="bg-slate-900">All Nodes</option>
+                  <option value={4} className="bg-slate-900">Top Rated</option>
+                  <option value={4.5} className="bg-slate-900">Elite Only</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -401,10 +413,10 @@ const App: React.FC = () => {
             {user?.isPro && (
               <button
                 onClick={() => setIsGuruOpen(!isGuruOpen)}
-                className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all border ${isGuruOpen ? 'bg-purple-100 border-purple-200 text-purple-700' : 'bg-white border-slate-200 text-slate-600 hover:text-purple-600 hover:border-purple-200'}`}
+                className={`hidden md:flex items-center gap-2 px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border ${isGuruOpen ? 'bg-purple-500/10 border-purple-500/20 text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.15)]' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'}`}
               >
                 <Sparkles className="w-4 h-4" />
-                <span className="hidden lg:inline">Guru Chat</span>
+                <span className="hidden lg:inline">Guru Oracle</span>
               </button>
             )}
 
@@ -414,33 +426,33 @@ const App: React.FC = () => {
                 else if (!user.isPro) setSubscriptionModalOpen(true);
                 else setIsBulkAddOpen(true);
               }}
-              className="hidden sm:flex items-center gap-2 px-3 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md hover:shadow-lg font-medium text-sm"
+              className="hidden sm:flex items-center gap-3 px-5 py-2.5 bg-blue-600/90 text-white rounded-xl hover:bg-blue-600 transition-all shadow-xl shadow-blue-600/20 active:scale-95 font-black text-[10px] uppercase tracking-widest border border-white/10"
               title={!user?.isPro ? "Upgrade to Add Prompts" : "Add New Prompts"}
             >
               <Plus className="w-4 h-4" />
-              <span className="hidden lg:inline">Add Prompts</span>
+              <span className="hidden lg:inline">Inject Unit</span>
             </button>
 
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="hidden md:flex flex-col items-end">
-                  <span className="text-sm font-semibold text-slate-800">{user.name}</span>
+                  <span className="text-sm font-semibold text-white">{user.name}</span>
                   <div className="flex items-center gap-1">
-                    {user.isPro && <span className="text-[10px] font-bold bg-gradient-to-r from-blue-500 to-purple-500 text-white px-1.5 py-0.5 rounded shadow-sm">PRO</span>}
+                    {user.isPro && <span className="text-[10px] font-bold btn-primary text-white px-1.5 py-0.5 rounded shadow-sm">PRO</span>}
                     <span className="text-xs text-slate-500">{user.email}</span>
                   </div>
                 </div>
-                <div className="w-9 h-9 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold border border-blue-200">
+                <div className="w-9 h-9 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center font-bold border border-blue-500/30">
                   {user.name[0].toUpperCase()}
                 </div>
-                <button onClick={handleLogout} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Log Out">
+                <button onClick={handleLogout} className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-colors" title="Log Out">
                   <LogOut className="w-5 h-5" />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-lg font-medium text-sm"
+                className="flex items-center gap-2 px-4 py-2 btn-primary text-white rounded-xl font-medium text-sm"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
@@ -450,7 +462,7 @@ const App: React.FC = () => {
         </header>
 
         {/* Scrollable Canvas */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-6 md:p-8">
           <div className="max-w-7xl mx-auto pb-20">
 
             {selectedPrompt ? (
@@ -462,15 +474,15 @@ const App: React.FC = () => {
             ) : (
               <>
                 {/* Category Header */}
-                <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold text-slate-900">
-                      {activeCategory === 'saved' ? 'Saved Prompts' :
-                        activeCategory === 'history' ? 'Recently Used' :
+                    <h2 className="text-3xl font-extrabold text-white text-gradient">
+                      {activeCategory === 'saved' ? 'Saved Collections' :
+                        activeCategory === 'history' ? 'Recent Activity' :
                           activeCategory}
                     </h2>
-                    <p className="text-slate-500 mt-1">
-                      {filteredPrompts.length} result{filteredPrompts.length !== 1 ? 's' : ''} found
+                    <p className="text-slate-400 mt-1 font-medium">
+                      Found <span className="text-blue-400">{filteredPrompts.length}</span> optimized prompt{filteredPrompts.length !== 1 ? 's' : ''}
                       {minRating > 0 && ` with ${minRating}+ stars`}
                     </p>
                   </div>
@@ -482,7 +494,7 @@ const App: React.FC = () => {
                       else if (!user.isPro) setSubscriptionModalOpen(true);
                       else setIsBulkAddOpen(true);
                     }}
-                    className="sm:hidden w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all shadow-md font-medium text-sm"
+                    className="sm:hidden w-full flex items-center justify-center gap-2 px-3 py-3 btn-primary text-white rounded-xl font-medium text-sm"
                   >
                     <Plus className="w-4 h-4" />
                     Add Prompts
@@ -508,15 +520,16 @@ const App: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-slate-200 border-dashed">
-                    <div className="bg-slate-50 p-4 rounded-full mb-4">
-                      <Filter className="w-8 h-8 text-slate-400" />
+                  <div className="flex flex-col items-center justify-center py-24 text-center glass rounded-[3rem] border border-white/5 border-dashed relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-500/5 blur-[100px] -z-10"></div>
+                    <div className="bg-blue-500/10 p-6 rounded-[2rem] mb-6 border border-blue-500/20 shadow-2xl">
+                      <Filter className="w-10 h-10 text-blue-400" />
                     </div>
-                    <h3 className="text-lg font-medium text-slate-900">No prompts found</h3>
-                    <p className="text-slate-500 mt-1 max-w-sm">
+                    <h3 className="text-2xl font-black text-white tracking-tight uppercase">No neural units found</h3>
+                    <p className="text-slate-500 mt-2 max-w-sm font-medium text-sm leading-relaxed">
                       {searchQuery
-                        ? `No results matching "${searchQuery}"`
-                        : "Try adjusting your filters or category selection."}
+                        ? `The search for "${searchQuery}" yielded no architectural results in this sector.`
+                        : "Synchronize your filters or category selection to locate valid units."}
                     </p>
                     <button
                       onClick={() => {
@@ -524,9 +537,9 @@ const App: React.FC = () => {
                         setActiveCategory(Category.ALL);
                         setMinRating(0);
                       }}
-                      className="mt-6 px-5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm"
+                      className="mt-8 px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white hover:border-white/20 transition-all shadow-2xl active:scale-95"
                     >
-                      Clear all filters
+                      Reset Synchronization
                     </button>
                   </div>
                 )}
@@ -535,9 +548,9 @@ const App: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <footer className="max-w-7xl mx-auto py-12 px-6 border-t border-slate-200 mt-20 flex flex-col md:flex-row items-center justify-between gap-6 text-slate-500 text-sm">
-            <div className="flex items-center gap-2 font-bold text-slate-900">
-              <Sparkles className="w-5 h-5 text-blue-600" />
+          <footer className="max-w-7xl mx-auto py-16 px-6 border-t border-white/5 mt-20 flex flex-col md:flex-row items-center justify-between gap-8 text-slate-500 text-sm">
+            <div className="flex items-center gap-2 font-bold text-white">
+              <Sparkles className="w-5 h-5 text-blue-500" />
               Myers Prompt Guru
             </div>
             <div className="flex items-center gap-8">

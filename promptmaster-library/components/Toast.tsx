@@ -23,21 +23,21 @@ export const Toast: React.FC<ToastProps> = ({ message, type, onClose, duration =
     };
 
     const colors = {
-        success: 'border-green-100 bg-green-50 shadow-green-100/50',
-        error: 'border-red-100 bg-red-50 shadow-red-100/50',
-        info: 'border-blue-100 bg-blue-50 shadow-blue-100/50'
+        success: 'border-emerald-500/20 bg-emerald-500/10 shadow-emerald-500/10',
+        error: 'border-red-500/20 bg-red-500/10 shadow-red-500/10',
+        info: 'border-blue-500/20 bg-blue-500/10 shadow-blue-500/10'
     };
 
     return (
         <div className={`
-      fixed bottom-6 right-6 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg animate-in fade-in slide-in-from-bottom-4 duration-300
+      fixed bottom-8 right-8 z-[100] flex items-center gap-4 px-6 py-4 rounded-2xl glass border shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-500 cubic-bezier(0.16, 1, 0.3, 1)
       ${colors[type]}
     `}>
-            <div className="flex-shrink-0">{icons[type]}</div>
-            <p className="text-sm font-medium text-slate-800 pr-2">{message}</p>
+            <div className="flex-shrink-0 animate-pulse">{icons[type]}</div>
+            <p className="text-sm font-black text-white pr-4 tracking-tight">{message}</p>
             <button
                 onClick={onClose}
-                className="p-1 hover:bg-white/50 rounded-lg transition-colors text-slate-400 hover:text-slate-600"
+                className="p-2 hover:bg-white/5 rounded-xl transition-all text-slate-500 hover:text-white"
             >
                 <X className="w-4 h-4" />
             </button>

@@ -3,62 +3,46 @@ import { FileText, Scale, Zap, AlertTriangle, ArrowLeft } from 'lucide-react';
 
 export const TermsOfService: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     return (
-        <div className="fixed inset-0 z-[100] bg-white overflow-y-auto animate-in fade-in duration-300">
-            <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="fixed inset-0 z-[100] bg-[#020617] overflow-y-auto animate-in fade-in duration-500 custom-scrollbar">
+            {/* Background Accents */}
+            <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-600/5 rounded-full blur-[150px]"></div>
+            </div>
+
+            <div className="max-w-4xl mx-auto px-6 py-16">
                 <button
                     onClick={onClose}
-                    className="mb-8 flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors group"
+                    className="mb-12 flex items-center gap-3 text-slate-500 hover:text-white transition-all group font-black uppercase tracking-widest text-xs"
                 >
-                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                    Back to Library
+                    <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+                    Exit Legal Subsystem
                 </button>
 
-                <header className="mb-12">
-                    <div className="bg-purple-100 w-16 h-16 rounded-2xl flex items-center justify-center text-purple-600 mb-6">
-                        <Scale className="w-8 h-8" />
+                <header className="mb-20">
+                    <div className="bg-purple-500/10 w-20 h-20 rounded-[2rem] flex items-center justify-center text-purple-400 mb-8 border border-purple-500/20 shadow-2xl">
+                        <Scale className="w-10 h-10" />
                     </div>
-                    <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Terms of Service</h1>
-                    <p className="text-slate-500">Last updated: February 2, 2026</p>
+                    <h1 className="text-6xl font-black text-white mb-4 tracking-tighter uppercase">Terms of <span className="text-purple-500">Operation</span></h1>
+                    <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-[10px]">VERIFIED 02.02.2026 • SECTOR ALPHA</p>
                 </header>
 
-                <div className="prose prose-slate max-w-none space-y-8 text-slate-700">
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Zap className="w-5 h-5 text-purple-500" /> 1. Acceptance of Terms
+                <div className="space-y-12">
+                    <section className="glass p-10 rounded-[2.5rem] border border-white/5">
+                        <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-4 tracking-tight uppercase">
+                            <Zap className="w-6 h-6 text-purple-500" /> Operational Upgrade
                         </h2>
-                        <p>By accessing or using Myers Prompt Guru, you agree to be bound by these Terms of Service. If you do not agree to all of these terms, do not use our services.</p>
+                        <p className="text-slate-400 font-medium leading-relaxed">Pro sub-routines (AI Oracle, Bulk Neural Injection, OCR) operate on a monthly synchronization fee. Access is granted instantly upon unit verification via Stripe. Cancellation voids access at the end of the current cycle.</p>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Zap className="w-5 h-5 text-purple-500" /> 2. Pro Subscriptions
+                    <section className="glass p-10 rounded-[2.5rem] border border-white/5">
+                        <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-4 tracking-tight uppercase">
+                            <AlertTriangle className="w-6 h-6 text-purple-500" /> Oracle Disclaimer
                         </h2>
-                        <p>Our Pro features (AI Guru, Bulk Import, OCR) are provided on a monthly subscription basis. Subscriptions are billed in advance and are non-refundable except as required by law. You may cancel your subscription at any time via your Stripe portal.</p>
+                        <p className="text-slate-400 font-medium leading-relaxed">AI-derived units and Oracle directives are provided as-is. We do not guarantee core integrity or production results. Architects are solely responsible for unit validation prior to deployment.</p>
                     </section>
 
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <FileText className="w-5 h-5 text-purple-500" /> 3. Intellectual Property
-                        </h2>
-                        <p>You retain ownership of any prompts you create or import. However, you grant Myers Digital Services a worldwide, non-exclusive license to host, store, and display your content solely for the purpose of providing the service to you.</p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <AlertTriangle className="w-5 h-5 text-purple-500" /> 4. Disclaimer of AI Output
-                        </h2>
-                        <p>AI-generated content and Guru advice are provided "as-is" for informational purposes. We do not guarantee the accuracy, safety, or effectiveness of prompts or advice generated by our AI services. Users are responsible for testing and validating any prompt before production use.</p>
-                    </section>
-
-                    <section>
-                        <h2 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                            <Scale className="w-5 h-5 text-purple-500" /> 5. Limitation of Liability
-                        </h2>
-                        <p>Myers Digital Services shall not be liable for any indirect, incidental, special, or consequential damages resulting from the use or inability to use our services.</p>
-                    </section>
-
-                    <footer className="pt-12 border-t border-slate-100 text-sm text-slate-400">
-                        <p>&copy; 2026 Myers Digital Services. All rights reserved.</p>
+                    <footer className="pt-20 pb-10 text-center border-t border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-700">&copy; 2026 MYERS DIGITAL SERVICES • ALL RIGHTS RESERVED</p>
                     </footer>
                 </div>
             </div>

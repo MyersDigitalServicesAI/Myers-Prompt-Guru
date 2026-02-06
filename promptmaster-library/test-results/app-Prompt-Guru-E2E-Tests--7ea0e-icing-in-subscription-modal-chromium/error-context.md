@@ -101,7 +101,7 @@
           - generic [ref=e115]:
             - heading "All Prompts" [level=2] [ref=e116]
             - paragraph [ref=e117]: Found 8 optimized prompts
-          - button "Add Prompts" [ref=e118]:
+          - button "Add Prompts" [active] [ref=e118]:
             - img [ref=e119]
             - text: Add Prompts
         - generic [ref=e120]:
@@ -341,4 +341,25 @@
         - button [disabled] [ref=e437]:
           - img [ref=e438]
       - paragraph [ref=e441]: AI Architectures may require human verification.
+  - generic [ref=e443]:
+    - button [ref=e444]:
+      - img [ref=e445]
+    - generic [ref=e448]:
+      - heading "Neural Access" [level=2] [ref=e449]
+      - paragraph [ref=e450]: Synchronize your architectural library
+    - generic [ref=e451]:
+      - generic [ref=e452]:
+        - text: Email Protocol
+        - generic [ref=e453]:
+          - img [ref=e454]
+          - textbox "you@protocol.com" [ref=e457]
+      - generic [ref=e458]:
+        - text: Security Key
+        - generic [ref=e459]:
+          - img [ref=e460]
+          - textbox "••••••••" [ref=e463]
+      - button "Initiate Link" [ref=e464]
+    - generic [ref=e465]:
+      - text: No authorization?
+      - button "Sign up" [ref=e466]
 ```

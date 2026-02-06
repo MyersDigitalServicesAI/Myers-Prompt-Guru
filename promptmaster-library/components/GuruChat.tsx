@@ -56,41 +56,41 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
 
       {/* Slide-out Panel */}
       <div className={`
-        fixed top-0 right-0 bottom-0 w-full sm:w-[400px] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-slate-200 flex flex-col
+        fixed top-0 right-0 bottom-0 w-full sm:w-[500px] glass z-50 shadow-[0_0_100px_rgba(0,0,0,0.5)] transform transition-transform duration-500 ease-in-out border-l border-white/10 flex flex-col
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
 
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md">
-              <Bot className="w-6 h-6" />
+        <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-white shadow-xl shadow-blue-600/20">
+              <Bot className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900">Prompt Guru</h3>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span className="text-xs text-slate-500 font-medium">Online</span>
+              <h3 className="font-black text-white text-lg tracking-tight">Prompt Architect</h3>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></span>
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Neural Link Active</span>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-200 rounded-full transition-colors">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="p-3 text-slate-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all">
+            <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           {messages.map((msg, idx) => (
             <div
               key={idx}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`
-                max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap
+                max-w-[85%] rounded-[1.5rem] px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap
                 ${msg.role === 'user'
-                  ? 'bg-slate-900 text-white rounded-br-none shadow-md'
-                  : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm'}
+                  ? 'btn-primary text-white rounded-tr-none shadow-xl shadow-blue-500/10'
+                  : 'bg-white/5 border border-white/10 text-slate-300 rounded-tl-none font-medium'}
               `}>
                 {msg.text}
               </div>
@@ -98,9 +98,12 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-2">
-                <Loader2 className="w-4 h-4 text-purple-600 animate-spin" />
-                <span className="text-xs text-slate-400">Thinking...</span>
+              <div className="bg-white/5 border border-white/10 px-6 py-4 rounded-[1.5rem] rounded-tl-none flex items-center gap-3">
+                <div className="relative">
+                  <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
+                  <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-purple-500 animate-pulse" />
+                </div>
+                <span className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Processing...</span>
               </div>
             </div>
           )}
@@ -108,7 +111,7 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-white border-t border-slate-100">
+        <div className="p-8 bg-black/20 border-t border-white/5">
           <div className="relative">
             <textarea
               value={input}
@@ -119,20 +122,20 @@ export const GuruChat: React.FC<GuruChatProps> = ({ isOpen, onClose }) => {
                   handleSend();
                 }
               }}
-              placeholder="Ask for help with a prompt..."
-              className="w-full pl-4 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 outline-none resize-none max-h-32 min-h-[50px]"
+              placeholder="Inject engineering query..."
+              className="w-full pl-6 pr-14 py-4 bg-white/5 border border-white/10 rounded-[1.5rem] text-sm text-white focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 outline-none resize-none max-h-48 min-h-[60px] font-medium placeholder-slate-600 shadow-inner"
               rows={1}
             />
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="absolute right-2 bottom-2 p-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:bg-slate-300 transition-all shadow-sm"
+              className="absolute right-3 bottom-3 p-3 btn-primary text-white rounded-xl disabled:opacity-30 disabled:grayscale transition-all shadow-lg active:scale-95"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-[10px] text-center text-slate-400 mt-2">
-            AI can make mistakes. Review generated prompts.
+          <p className="text-[9px] font-bold text-center text-slate-600 mt-4 uppercase tracking-widest">
+            AI Architectures may require human verification.
           </p>
         </div>
       </div>

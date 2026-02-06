@@ -35,82 +35,68 @@ export const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ isOpen, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={onClose} />
 
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-lg glass rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10 animate-in zoom-in-95 duration-300">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors z-10"
+          className="absolute top-6 right-6 p-2.5 text-slate-500 hover:text-white hover:bg-white/5 rounded-2xl transition-all z-20"
         >
-          <X className="w-5 h-5" />
+          <X className="w-6 h-6" />
         </button>
 
         {/* Hero Section */}
-        <div className="bg-slate-900 p-8 text-center relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-400 via-slate-900 to-slate-900"></div>
+        <div className="p-10 text-center relative overflow-hidden border-b border-white/5 bg-white/[0.02]">
+          <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[radial-gradient(circle_at_50%_0%,_var(--tw-gradient-stops))] from-blue-500 via-transparent to-transparent"></div>
           <div className="relative z-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/20 text-blue-400 mb-4 border border-blue-500/30">
-              <Zap className="w-6 h-6" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-[2rem] bg-blue-500/10 text-blue-400 mb-6 border border-blue-500/20 shadow-2xl shadow-blue-500/10">
+              <Zap className="w-8 h-8 fill-blue-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Upgrade to Pro</h2>
-            <p className="text-slate-400 text-sm">Unlock the full power of PromptMaster</p>
+            <h2 className="text-4xl font-black text-white mb-3 tracking-tight">GO <span className="text-blue-500">PRO</span></h2>
+            <p className="text-slate-400 text-sm font-medium tracking-wide">UNLOCK THE ULTIMATE PROMPT ARCHITECT</p>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-8">
-          <div className="flex items-baseline justify-center mb-8">
-            <span className="text-4xl font-bold text-slate-900">$5.00</span>
-            <span className="text-slate-500 ml-1">/ month</span>
+        <div className="p-10">
+          <div className="flex items-baseline justify-center mb-10 gap-2">
+            <span className="text-5xl font-black text-white tracking-tighter">$5.00</span>
+            <span className="text-slate-500 font-bold uppercase tracking-widest text-xs">/ month</span>
           </div>
 
-          <ul className="space-y-4 mb-8">
-            <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <Check className="w-3 h-3" />
-              </div>
-              <span className="text-sm font-medium">Access to <span className="text-blue-600 font-bold">LLM Guru</span> (Prompt Architect)</span>
-            </li>
-            <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <Check className="w-3 h-3" />
-              </div>
-              <span className="text-sm">Edge-Based <span className="text-blue-600 font-bold">Screenshot & Photo</span> Extraction</span>
-            </li>
-            <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <Check className="w-3 h-3" />
-              </div>
-              <span className="text-sm">Batch / <span className="text-blue-600 font-bold">Bulk Upload</span> existing prompts</span>
-            </li>
-            <li className="flex items-center gap-3 text-slate-700">
-              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                <Check className="w-3 h-3" />
-              </div>
-              <span className="text-sm">Unlimited Library Storage</span>
-            </li>
+          <ul className="space-y-5 mb-10">
+            {[
+              { text: "Access to LLM Guru Architect", color: "text-blue-400" },
+              { text: "Edge-Based OCR Analysis", color: "text-blue-400" },
+              { text: "Bulk Neural Injection", color: "text-blue-400" },
+              { text: "Unlimited Synced Storage", color: "text-blue-400" }
+            ].map((item, i) => (
+              <li key={i} className="flex items-center gap-4 text-slate-300 group">
+                <div className="flex-shrink-0 w-6 h-6 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform">
+                  <Check className="w-4 h-4" />
+                </div>
+                <span className="text-sm font-semibold tracking-tight">{item.text}</span>
+              </li>
+            ))}
           </ul>
 
           <button
             onClick={handleSubscribe}
             disabled={isProcessing}
-            className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-5 btn-primary text-white text-sm font-black uppercase tracking-[0.2em] rounded-[1.5rem] shadow-2xl shadow-blue-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-3 disabled:opacity-30 disabled:grayscale"
           >
             {isProcessing ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Processing...
-              </>
+              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
-                Subscribe Now
+                <Sparkles className="w-5 h-5" />
+                Initiate Upgrade
               </>
             )}
           </button>
 
-          <p className="text-xs text-center text-slate-400 mt-4">
-            Secure payment via MockStripe. Cancel anytime.
+          <p className="text-[10px] uppercase font-black tracking-[0.2em] text-center text-slate-600 mt-6">
+            SECURE ACCESS • CANCEL ANYTIME • 256-BIT ENCRYPTION
           </p>
         </div>
       </div>

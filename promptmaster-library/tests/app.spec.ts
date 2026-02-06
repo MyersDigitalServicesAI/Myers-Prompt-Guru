@@ -11,7 +11,7 @@ test.describe('Prompt Guru E2E Tests', () => {
     test('should display the main library and categories', async ({ page }) => {
         // Categories are visible in the sidebar
         await expect(page.getByText('Coding & Development')).toBeVisible();
-        await expect(page.getByText('Marketing & Business')).toBeVisible();
+        await expect(page.getByText('Marketing & SEO')).toBeVisible();
     });
 
     test('should open prompt editor and update preview in real-time', async ({ page }) => {
